@@ -1,3 +1,3 @@
 /*
 	@file
-	Arduino library for LoRa Module via UART 
+	Arduino library for communication to LoRa Module via UART 
