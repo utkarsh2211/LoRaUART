@@ -11,4 +11,10 @@
 /* _____PROJECT INCLUDES_____________________________________________________ */
 #include "LoRaUART.h"
 
-	
+ 	
+
+void LoRaUART::initLoRa()
+{
+requestCmd= requestCmd + CmdType + ',' + read + ',' + ATcmd + ',' + "\r\n"; 
+}	
+
