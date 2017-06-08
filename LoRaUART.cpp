@@ -62,3 +62,134 @@ void LoRaUART::setBaudRate(uint32_t baudrate)
 	};
 	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + ',' + _baudrate + "\r\n";
 }
+
+void LoRaUART::getDeviceEUI()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdDeviceEUI;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";
+
+}
+
+void LoRaUART::setDeviceEUI(uint8_t* deviceEUI, int size)
+{
+	_RWmode = write;
+	_ATcmd = ATcmdDeviceEUI;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + ",";
+	for(int i=1; i<=size; i++)
+	{
+		if(i!=size)
+			requestCmd = requestCmd + *deviceEUI + ',';
+		else
+			requestCmd = requestCmd + *deviceEUI;
+		deviceEUI++;
+	}
+	requestCmd= requestCmd + "\r\n";
+}
+
+void LoRaUART::getApplicationEUI()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdApplicationEUI;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";
+}
+
+void LoRaUART::setApplicationEUI(uint8_t* applicationEUI, int size)
+{
+	_RWmode = write;
+	_ATcmd = ATcmdApplicationEUI;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + ",";
+	for(int i=1; i<=size; i++)
+	{
+		if(i!=size)
+			requestCmd = requestCmd + *applicationEUI + ',';
+		else
+			requestCmd = requestCmd + *applicationEUI;
+		applicationEUI++;
+	}
+	requestCmd = requestCmd + "\r\n";
+}
+
+void LoRaUART::getApplicationKey()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdApplicationKey;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";
+}	
+
+void LoRaUART::getNetworkKey()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdNetworkKey;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";
+}	
+
+void LoRaUART::getDeviceAddress()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdDeviceAddr;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";
+}	
+
+void LoRaUART::getNetworkConnType()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdNetworkConnType;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";
+}
+
+void LoRaUART::getNetworkID()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdNetworkID;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";	
+}
+
+void LoRaUART::getADRStatus()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdADRStatus;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";	
+}
+
+void LoRaUART::getUplinkAckStatus()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdUplinkAckStatus;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";	
+}
+
+void LoRaUART::getDataConfirmationRetries()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdDataConfirmRetries;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";	
+}
+
+void LoRaUART::getDataRate()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdDefaultDataRate;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";	
+}
+
+void LoRaUART::getPowerSavingStatus()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdPowerSaveMode;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";	
+}
+
+void LoRaUART::getClassSelection()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdClassSelection;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";	
+}
+
+void LoRaUART::moduleTest()
+{
+	_RWmode = read;
+	_ATcmd = ATcmdModuleTestCmd;
+	requestCmd= requestCmd + CmdType + ',' + _RWmode + ',' + _ATcmd + "\r\n";	
+}
