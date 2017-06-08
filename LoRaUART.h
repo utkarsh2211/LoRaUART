@@ -15,8 +15,10 @@
 /**
 Arduino class library for communicating with LoRa module via UART.
 */
-
+//
 //#include "SoftwareSerial.h"
+#include "WString.h"
+#include "Arduino.h"
 
 class LoRaUART
 {
@@ -27,7 +29,7 @@ class LoRaUART
   	void activateLoRa();
   	void deactivateLoRa();
   	void restoreDefault();
-  	void getBaudRate();
+  	uint32_t getBaudRate();
   	void setBaudRate(uint32_t);
   	void getDeviceEUI();
   	void setDeviceEUI(uint8_t*, int);
@@ -48,7 +50,7 @@ class LoRaUART
 
   	void sendUplink(uint8_t, int, uint8_t*);
 
-	String requestCmd;
+	String requestCmd = "";
 
   private:
 
@@ -85,6 +87,9 @@ class LoRaUART
 	uint32_t baudrate;
 	int _datalength;
 	String _CmdType;
+	String response = "";
+	char incomingByte;
+	bool _timeout;
 
 };
 const String LoRaUART::requestAPI = "$CMD";
