@@ -16,6 +16,8 @@
 Arduino class library for communicating with LoRa module via UART.
 */
 
+#include "SoftwareSerial.h"
+
 class LoRaUART
 {
   public:
@@ -27,6 +29,22 @@ class LoRaUART
   	void restoreDefault();
   	void getBaudRate();
   	void setBaudRate(uint32_t);
+  	void getDeviceEUI();
+  	void setDeviceEUI(uint8_t, int);
+  	void getApplicationEUI();
+  	void setApplicationEUI(uint8_t, int);
+  	void getApplicationKey();
+  	void getNetworkKey();
+  	void getDeviceAddress();
+  	void getNetworkConnType();
+  	void getNetworkID();
+  	void getADRStatus();
+  	void getUplinkAckStatus();
+  	void getDataConfirmationRetries();
+  	void getDataRate();
+  	void getPowerSavingStatus();
+  	void getClassSelection();
+  	void moduleTest();
 
 	string* requestCmd;
 
@@ -58,6 +76,7 @@ class LoRaUART
   	uint8_t _ATcmd ;
   	uint32_t baudrate;
   	uint8_t _baudrate;
+
 
 
 
