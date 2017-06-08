@@ -16,7 +16,7 @@
 Arduino class library for communicating with LoRa module via UART.
 */
 
-#include "SoftwareSerial.h"
+//#include "SoftwareSerial.h"
 
 class LoRaUART
 {
@@ -30,9 +30,9 @@ class LoRaUART
   	void getBaudRate();
   	void setBaudRate(uint32_t);
   	void getDeviceEUI();
-  	void setDeviceEUI(uint8_t, int);
+  	void setDeviceEUI(uint8_t*, int);
   	void getApplicationEUI();
-  	void setApplicationEUI(uint8_t, int);
+  	void setApplicationEUI(uint8_t*, int);
   	void getApplicationKey();
   	void getNetworkKey();
   	void getDeviceAddress();
@@ -46,13 +46,17 @@ class LoRaUART
   	void getClassSelection();
   	void moduleTest();
 
-	string* requestCmd;
+  	void sendUplink(uint8_t, int, uint8_t*);
+
+	String requestCmd;
 
   private:
 
-  	static const string CmdType = "$CMD";
-  	static const uint8_t read = 0x00;
-  	static const uint8_t write = 0x01;
+  	static const String requestAPI;
+  	static const String uplinkAPI;
+  	static const String downlinkAPI;
+  	static const uint8_t readCmd = 0x00;
+  	static const uint8_t writeCmd = 0x01;
   	static const uint8_t ATcmdRestoreDefault     = 0x00;
   	static const uint8_t ATcmdInitLoRa           = 0x01;
   	static const uint8_t ATcmdDeactivateLoRa     = 0x02;
@@ -72,13 +76,20 @@ class LoRaUART
 	static const uint8_t ATcmdPowerSaveMode      = 0x10;
 	static const uint8_t ATcmdClassSelection     = 0x11;
 	static const uint8_t ATcmdModuleTestCmd      = 0xFF;
+
 	uint8_t _RWmode;
-  	uint8_t _ATcmd ;
-  	uint32_t baudrate;
-  	uint8_t _baudrate;
+	uint8_t _ATcmd ;
+	uint8_t _baudrate;
+	uint8_t _portnum;
 
+	uint32_t baudrate;
+	int _datalength;
+	String _CmdType;
 
-
+};
+const String LoRaUART::requestAPI = "$CMD";
+const String LoRaUART::uplinkAPI = "$UP";
+const String LoRaUART::downlinkAPI = "$DOWN";
 
 
 /*  	 Stream* _serial;                                             ///< reference to serial port object
