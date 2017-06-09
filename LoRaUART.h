@@ -83,6 +83,15 @@ class LoRaUART
 	uint8_t _ATcmd ;
 	uint8_t _baudrate;
 	uint8_t _portnum;
+	uint8_t _dataConfirmRetries;
+	uint8_t _defaultDataRate;
+
+
+	uint16_t _netConnType;
+	uint16_t _ADRStatus;
+	uint16_t _uplinkAckStatus;
+	uint16_t _powSaveStatus;
+	uint16_t _classSelection;
 
 	uint32_t baudrate;
 	int _datalength;
