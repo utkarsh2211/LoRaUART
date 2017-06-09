@@ -48,7 +48,7 @@ uint32_t LoRaUART::initLoRa()
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
-			case 1: return -1; break
+			case 1: return -1; break;
 			case 2: return -2; break;
 		}	
 	}
@@ -93,7 +93,7 @@ uint32_t LoRaUART::activateLoRa()
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
-			case 1: return -1; break
+			case 1: return -1; break;
 			case 2: return -2; break;
 		}	
 	}
@@ -137,7 +137,7 @@ uint32_t LoRaUART::deactivateLoRa()
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
-			case 1: return -1; break
+			case 1: return -1; break;
 			case 2: return -2; break;
 		}	
 	}
@@ -179,7 +179,7 @@ uint32_t LoRaUART::restoreDefault()
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
-			case 1: return -1; break
+			case 1: return -1; break;
 			case 2: return -2; break;
 		}	
 	}
@@ -240,7 +240,7 @@ uint32_t LoRaUART::getBaudRate()
 						case 4 : return 115200; break;
 					}
 					break;	
-			case 1: return -1; break
+			case 1: return -1; break;
 			case 2: return -2; break;
 		}	
 	}
@@ -296,13 +296,13 @@ uint32_t LoRaUART::setBaudRate(uint32_t baudrate)
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
-			case 1: return -1; break
+			case 1: return -1; break;
 			case 2: return -2; break;
 		}	
 	}
 }
 
-void LoRaUART::getDeviceEUI(uint8_t* deviceEUI)
+uint32_t LoRaUART::getDeviceEUI(uint8_t* deviceEUI)
 {
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
@@ -342,20 +342,21 @@ void LoRaUART::getDeviceEUI(uint8_t* deviceEUI)
 
 		responseStatus=strtoul(q,NULL,16);
 
-		for(int j = third; response.charAt(j)!='\r\n'; j++)
+		for(int j = third, int a=0; response.charAt(j)!='\r\n'; j++)
 		{
 			if(response.charAt(j)==',')
 			{
 				temp[0]= response.charAt(j+1);
 				temp[1]= response.charAt(j+2);
-				
+				temp[2]= '\0';
+				*(deviceEUI+a) = strtoul(temp,NULL,16);
 			}
 		}
 
 		switch(responseStatus)
 		{
-			case 0: return 0; break;
-			case 1: return -1; break
+			case 0: return 1; break;
+			case 1: return -1; break;
 			case 2: return -2; break;
 		}	
 	}
@@ -408,14 +409,14 @@ uint32_t LoRaUART::setDeviceEUI(uint8_t* deviceEUI, int EUIlength)
 		responseStatus = strtoul(q,NULL,16);
 		switch(responseStatus)
 		{
-			case 0: return 0; break;
-			case 1: return -1; break
+			case 0: return 1; break;
+			case 1: return -1; break;
 			case 2: return -2; break;
 		}	
 	}
 }
 
-void LoRaUART::getApplicationEUI()
+uint32_t LoRaUART::getApplicationEUI(uint8_t* applicationEUI)
 {
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
@@ -436,9 +437,46 @@ void LoRaUART::getApplicationEUI()
 			response += _incomingByte;
 		}	
 	}
+
+	char q[3];
+	char temp[3];
+	int first,second,third;
+	unsigned long responseStatus;
+
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		third = response.indexOf(',',second+1);
+
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+
+		responseStatus=strtoul(q,NULL,16);
+
+		for(int j = third, int a=0; response.charAt(j)!='\r\n'; j++)
+		{
+			if(response.charAt(j)==',')
+			{
+				temp[0]= response.charAt(j+1);
+				temp[1]= response.charAt(j+2);
+				temp[2]= '\0';
+				*(applicationEUI+a) = strtoul(temp,NULL,16);
+			}
+		}
+
+		switch(responseStatus)
+		{
+			case 0: return 1; break;
+			case 1: return -1; break;
+			case 2: return -2; break;
+		}	
+	}
 }
 
-void LoRaUART::setApplicationEUI(uint8_t* applicationEUI, int EUIlength)
+uint32_t LoRaUART::setApplicationEUI(uint8_t* applicationEUI, int EUIlength)
 {
 	_CmdType = requestAPI;
 	_RWmode = writeCmd;
@@ -470,7 +508,7 @@ void LoRaUART::setApplicationEUI(uint8_t* applicationEUI, int EUIlength)
 	}
 }
 
-void LoRaUART::getApplicationKey()
+uint32_t LoRaUART::getApplicationKey(uint8_t* _applicationKey)
 {
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
@@ -491,9 +529,46 @@ void LoRaUART::getApplicationKey()
 			response += _incomingByte;
 		}	
 	}
+
+	char q[3];
+	char temp[3];
+	int first,second,third;
+	unsigned long responseStatus;
+
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		third = response.indexOf(',',second+1);
+
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+
+		responseStatus=strtoul(q,NULL,16);
+
+		for(int j = third, int a=0; response.charAt(j)!='\r\n'; j++)
+		{
+			if(response.charAt(j)==',')
+			{
+				temp[0]= response.charAt(j+1);
+				temp[1]= response.charAt(j+2);
+				temp[2]= '\0';
+				*(_applicationKey+a) = strtoul(temp,NULL,16);
+			}
+		}
+
+		switch(responseStatus)
+		{
+			case 0: return 1; break;
+			case 1: return -1; break;
+			case 2: return -2; break;
+		}	
+	}
 }	
 
-void LoRaUART::getNetworkKey()
+uint32_t LoRaUART::getNetworkKey(uint8_t* _networkKey)
 {
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
@@ -514,9 +589,46 @@ void LoRaUART::getNetworkKey()
 			response += _incomingByte;
 		}	
 	}
+
+	char q[3];
+	char temp[3];
+	int first,second,third;
+	unsigned long responseStatus;
+
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		third = response.indexOf(',',second+1);
+
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+
+		responseStatus=strtoul(q,NULL,16);
+
+		for(int j = third, int a=0; response.charAt(j)!='\r\n'; j++)
+		{
+			if(response.charAt(j)==',')
+			{
+				temp[0]= response.charAt(j+1);
+				temp[1]= response.charAt(j+2);
+				temp[2]= '\0';
+				*(_networkKey+a) = strtoul(temp,NULL,16);
+			}
+		}
+
+		switch(responseStatus)
+		{
+			case 0: return 1; break;
+			case 1: return -1; break;
+			case 2: return -2; break;
+		}	
+	}
 }	
 
-void LoRaUART::getDeviceAddress()
+uint32_t LoRaUART::getDeviceAddress(uint8_t* _deviceAddress)
 {
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
@@ -537,9 +649,46 @@ void LoRaUART::getDeviceAddress()
 			response += _incomingByte;
 		}	
 	}
+
+	char q[3];
+	char temp[3];
+	int first,second,third;
+	unsigned long responseStatus;
+
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		third = response.indexOf(',',second+1);
+
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+
+		responseStatus=strtoul(q,NULL,16);
+
+		for(int j = third, int a=0; response.charAt(j)!='\r\n'; j++)
+		{
+			if(response.charAt(j)==',')
+			{
+				temp[0]= response.charAt(j+1);
+				temp[1]= response.charAt(j+2);
+				temp[2]= '\0';
+				*(_deviceAddress+a) = strtoul(temp,NULL,16);
+			}
+		}
+
+		switch(responseStatus)
+		{
+			case 0: return 1; break;
+			case 1: return -1; break;
+			case 2: return -2; break;
+		}	
+	}
 }	
 
-void LoRaUART::getNetworkConnType()
+uint32_t LoRaUART::getNetworkConnType()
 {
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
@@ -560,9 +709,44 @@ void LoRaUART::getNetworkConnType()
 			response += _incomingByte;
 		}	
 	}
+
+	char q[3];
+	char b[3];
+	int first,second,third;
+	unsigned long responseStatus;
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		third = response.indexOf(',',second+1);
+
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+
+		b[0]= response.charAt(second+1);
+		b[1]= response.charAt(second+1);
+		b[2]= '\0';
+
+		responseStatus=strtoul(q,NULL,16);
+		_netConnType = strtoul(b,NULL,16);
+
+		switch(responseStatus)
+		{
+			case 0: switch(_netConnType)						//success
+					{
+						case 0 : return 0; break;				//Activation By Personalisation
+						case 1 : return 1; break;				//Over The Air Activation
+					}
+					break;	
+			case 1: return -1; break;							//invalid parameter
+			case 2: return -2; break;							//AT command error
+		}	
+	}
 }
 
-void LoRaUART::getNetworkID()
+uint32_t LoRaUART::getNetworkID(uint8_t* _networkID)
 {
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
@@ -583,9 +767,46 @@ void LoRaUART::getNetworkID()
 			response += _incomingByte;
 		}	
 	}	
+
+	char q[3];
+	char temp[3];
+	int first,second,third;
+	unsigned long responseStatus;
+
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		third = response.indexOf(',',second+1);
+
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+
+		responseStatus=strtoul(q,NULL,16);
+
+		for(int j = third, int a=0; response.charAt(j)!='\r\n'; j++)
+		{
+			if(response.charAt(j)==',')
+			{
+				temp[0]= response.charAt(j+1);
+				temp[1]= response.charAt(j+2);
+				temp[2]= '\0';
+				*(_networkID+a) = strtoul(temp,NULL,16);
+			}
+		}
+
+		switch(responseStatus)
+		{
+			case 0: return 1; break;
+			case 1: return -1; break;
+			case 2: return -2; break;
+		}	
+	}
 }
 
-void LoRaUART::getADRStatus()
+uint32_t LoRaUART::getADRStatus()
 {
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
@@ -605,10 +826,45 @@ void LoRaUART::getADRStatus()
 			_incomingByte = (char)Serial.read();
 			response += _incomingByte;
 		}	
+	}
+
+	char q[3];
+	char b[3];
+	int first,second,third;
+	unsigned long responseStatus;
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		third = response.indexOf(',',second+1);
+
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+
+		b[0]= response.charAt(second+1);
+		b[1]= response.charAt(second+1);
+		b[2]= '\0';
+
+		responseStatus=strtoul(q,NULL,16);
+		_ADRStatus = strtoul(b,NULL,16);
+
+		switch(responseStatus)
+		{
+			case 0: switch(_ADRStatus)							//success
+					{
+						case 0 : return 0; break;				//ADR On
+						case 1 : return 1; break;				//ADR Off
+					}
+					break;	
+			case 1: return -1; break;							//invalid parameter
+			case 2: return -2; break;							//AT command error
+		}	
 	}	
 }
 
-void LoRaUART::getUplinkAckStatus()
+uint32_t LoRaUART::getUplinkAckStatus()
 {
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
@@ -628,10 +884,45 @@ void LoRaUART::getUplinkAckStatus()
 			_incomingByte = (char)Serial.read();
 			response += _incomingByte;
 		}	
-	}	
+	}
+
+	char q[3];
+	char b[3];
+	int first,second,third;
+	unsigned long responseStatus;
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		third = response.indexOf(',',second+1);
+
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+
+		b[0]= response.charAt(second+1);
+		b[1]= response.charAt(second+1);
+		b[2]= '\0';
+
+		responseStatus=strtoul(q,NULL,16);
+		_uplinkAckStatus = strtoul(b,NULL,16);
+
+		switch(responseStatus)
+		{
+			case 0: switch(_uplinkAckStatus)					//success
+					{
+						case 0 : return 0; break;				//Uplink Acknowledgement On
+						case 1 : return 1; break;				//Uplink Acknowledgement Off
+					}
+					break;	
+			case 1: return -1; break;							//invalid parameter
+			case 2: return -2; break;							//AT command error
+		}	
+	}		
 }
 
-void LoRaUART::getDataConfirmationRetries()
+uint32_t LoRaUART::getDataConfirmationRetries()
 {
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
@@ -651,10 +942,41 @@ void LoRaUART::getDataConfirmationRetries()
 			_incomingByte = (char)Serial.read();
 			response += _incomingByte;
 		}	
+	}
+
+	char q[3];
+	char b[3];
+	int first,second,third;
+	unsigned long responseStatus;
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		third = response.indexOf(',',second+1);
+
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+
+		b[0]= response.charAt(second+1);
+		b[1]= response.charAt(second+1);
+		b[2]= '\0';
+
+		responseStatus=strtoul(q,NULL,16);
+		_dataConfirmRetries = strtoul(b,NULL,16);
+
+		switch(responseStatus)
+		{
+			case 0: return _dataConfirmRetries;					//Data Confirmation Retries Value
+					break;	
+			case 1: return -1; break;							//invalid parameter
+			case 2: return -2; break;							//AT command error
+		}	
 	}	
 }
 
-void LoRaUART::getDataRate()
+uint32_t LoRaUART::getDataRate()
 {
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
@@ -675,6 +997,37 @@ void LoRaUART::getDataRate()
 			response += _incomingByte;
 		}	
 	}	
+
+	char q[3];
+	char b[3];
+	int first,second,third;
+	unsigned long responseStatus;
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		third = response.indexOf(',',second+1);
+
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+
+		b[0]= response.charAt(second+1);
+		b[1]= response.charAt(second+1);
+		b[2]= '\0';
+
+		responseStatus=strtoul(q,NULL,16);
+		_defaultDataRate = strtoul(b,NULL,16);
+
+		switch(responseStatus)
+		{
+			case 0: return _defaultDataRate;					//Default data Rate
+					break;	
+			case 1: return -1; break;							//invalid parameter
+			case 2: return -2; break;							//AT command error
+		}	
+	}
 }
 
 void LoRaUART::getPowerSavingStatus()
@@ -696,6 +1049,41 @@ void LoRaUART::getPowerSavingStatus()
 		{
 			_incomingByte = (char)Serial.read();
 			response += _incomingByte;
+		}	
+	}
+
+	char q[3];
+	char b[3];
+	int first,second,third;
+	unsigned long responseStatus;
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		third = response.indexOf(',',second+1);
+
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+
+		b[0]= response.charAt(second+1);
+		b[1]= response.charAt(second+1);
+		b[2]= '\0';
+
+		responseStatus=strtoul(q,NULL,16);
+		_powSaveStatus = strtoul(b,NULL,16);
+
+		switch(responseStatus)
+		{
+			case 0: switch(_powSaveStatus)						//success
+					{
+						case 0 : return 0; break;				//Power Saving Mode On
+						case 1 : return 1; break;				//Power Saving Mode Off
+					}
+					break;	
+			case 1: return -1; break;							//invalid parameter
+			case 2: return -2; break;							//AT command error
 		}	
 	}	
 }
@@ -721,6 +1109,41 @@ void LoRaUART::getClassSelection()
 			response += _incomingByte;
 		}	
 	}	
+
+	char q[3];
+	char b[3];
+	int first,second,third;
+	unsigned long responseStatus;
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		third = response.indexOf(',',second+1);
+
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+
+		b[0]= response.charAt(second+1);
+		b[1]= response.charAt(second+1);
+		b[2]= '\0';
+
+		responseStatus=strtoul(q,NULL,16);
+		_classSelection = strtoul(b,NULL,16);
+
+		switch(responseStatus)
+		{
+			case 0: switch(_classSelection)						//success
+					{
+						case 0 : return 0; break;				//Class C
+						case 1 : return 1; break;				//Class A
+					}
+					break;	
+			case 1: return -1; break;							//invalid parameter
+			case 2: return -2; break;							//AT command error
+		}	
+	}
 }
 
 void LoRaUART::moduleTest()
@@ -743,7 +1166,28 @@ void LoRaUART::moduleTest()
 			_incomingByte = (char)Serial.read();
 			response += _incomingByte;
 		}	
-	}	
+	}
+
+	char q[3];
+	int first,second;
+	unsigned long responseStatus;
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+
+		responseStatus=strtoul(q,NULL,16);
+		switch(responseStatus)
+		{
+			case 0: return 1; break;				//success
+			case 1: return -1; break;				//invalid parameter
+			case 2: return -2; break;				//AT command error
+		}	
+	}
 }
 
 void LoRaUART::sendUplink(uint8_t portnum, int datalength, uint8_t* data)
