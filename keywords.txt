@@ -21,3 +21,5 @@ getDataRate	KEYWORD2
 getPowerSavingStatus	KEYWORD2
 getClassSelection	KEYWORD2
 moduleTest	KEYWORD2
+saveConfigToEEPROM	KEYWORD2
+retrieveConfigFromEEPROM	KEYWORD2	
