@@ -28,32 +28,32 @@ class LoRaUART
   public:
   	LoRaUART(int,int);
 
-  	uint32_t initLoRa();
-  	uint32_t activateLoRa();
-  	uint32_t deactivateLoRa();
-  	uint32_t restoreDefault();
-  	uint32_t getBaudRate();
-  	uint32_t setBaudRate(uint32_t);
-  	uint32_t getDeviceEUI(String*);
-  	uint32_t setDeviceEUI(String*, int);
-  	uint32_t getApplicationEUI(String*);
-  	uint32_t setApplicationEUI(String*, int);
-  	uint32_t getApplicationKey(String*);
-  	uint32_t getNetworkKey(String*);
-  	uint32_t getDeviceAddress(String*);
-  	uint32_t getNetworkConnType();
-  	uint32_t getNetworkID(String*);
-  	uint32_t getADRStatus();
-  	uint32_t getUplinkAckStatus();
-  	uint32_t getDataConfirmationRetries();
-  	uint32_t getDataRate();
-  	uint32_t getPowerSavingStatus();
-  	uint32_t getClassSelection();
-  	uint32_t saveConfigToEEPROM();
-  	uint32_t retrieveConfigFromEEPROM();
-  	uint32_t moduleTest();
+  	int initLoRa();
+  	int activateLoRa();
+  	int deactivateLoRa();
+  	int restoreDefault();
+  	long getBaudRate();
+  	int setBaudRate(uint32_t);
+  	int getDeviceEUI(String*);
+  	int setDeviceEUI(String*, int);
+  	int getApplicationEUI(String*);
+  	int setApplicationEUI(String*, int);
+  	int getApplicationKey(String*);
+  	int getNetworkKey(String*);
+  	int getDeviceAddress(String*);
+  	int getNetworkConnType();
+  	int getNetworkID(String*);
+  	int getADRStatus();
+  	int getUplinkAckStatus();
+  	int getDataConfirmationRetries();
+  	int getDataRate();
+  	int getPowerSavingStatus();
+  	int getClassSelection();
+  	int saveConfigToEEPROM();
+  	int retrieveConfigFromEEPROM();
+  	int moduleTest();
 
-  	uint32_t sendUplink(String, String, String*);
+  	int sendUplink(String, String, String*);
 
 	String requestCmd = "";
 	SoftwareSerial *altSerial;
@@ -108,7 +108,7 @@ class LoRaUART
 	uint16_t _classSelection;
 
 	uint32_t baudrate;
-	String _datalength;
+	int _datalength;
 	char _incomingByte;
 	bool _timeout;
 	int _rxPin;
