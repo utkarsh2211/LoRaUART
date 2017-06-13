@@ -13,6 +13,11 @@
 /* _____PROJECT INCLUDES_____________________________________________________ */
 #include "LoRaUART.h"
 
+/* General Note: For every request, return of 1 by the function corresponds to successful request
+									return of -1 corresponds to invalid parameters sent
+									return of -2 corresponds to AT command error
+
+*/
 
 LoRaUART::LoRaUART(int rxPin, int txPin)
 {
@@ -785,7 +790,6 @@ int LoRaUART::getNetworkKey(String* _networkKey)
 				*(_networkKey+a) +=response.charAt(j+1);
 				*(_networkKey+a) +=response.charAt(j+2);
 				a++;
-
 			}
 		}
 
@@ -1654,8 +1658,86 @@ int LoRaUART::sendUplink(String portnum, String datalength, String* data)
 			case 1: return -1; break;				//failure
 		}	
 	}
-
 }
 
+int LoRaUART:: checkDownlink()
+{
+	response="";
+	downlinkPort = "";
+	downlinkDataLength = "";	
+
+	if(altSerial->available()>0)
+	{
+		while(altSerial->available()>0)
+		{	
+			//altSerial->print("num");
+			//altSerial->print(altSerial->available());
+			_incomingByte = altSerial->read();
+			//altSerial->print("incoming");
+			//altSerial->print(_incomingByte);
+			response += _incomingByte;
+		}	
+		altSerial->print("response");
+		altSerial->print(response);
+	}
 
 
+	if(response.substring(0,5) == "$DOWN")  			//Downlink received
+	{
+		altSerial->print("Downlink");
+
+		int first,second,third;
+		first = response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		third = response.indexOf(',',second+1);
+		altSerial->print("first");
+		altSerial->print(first);
+		altSerial->print("second");
+		altSerial->print(second);
+		altSerial->print("third");
+		altSerial->print(third);
+
+
+		downlinkPort = downlinkPort + response.charAt(first+1)+ response.charAt(first+2);
+		altSerial->print("downlinkPort");
+		altSerial->print(downlinkPort);
+		downlinkDataLength = downlinkDataLength + response.charAt(second+1)+ response.charAt(second+2);	
+		altSerial->print("Downlinklength");
+		altSerial->print(downlinkDataLength);
+		int len= downlinkDataLength.toInt();
+		int commas=len-1;
+		int step=2*len+commas;
+		String _downlinkData[len];
+
+		for(int j = third, i=0;j<=third+step; j++)
+		{
+			altSerial->print(response.charAt(j));	
+			if(response.charAt(j)==',')
+			{
+				_downlinkData[i] = "";
+				_downlinkData[i] = _downlinkData[i] + response.charAt(j+1)+ response.charAt(j+2);
+				altSerial->print("Downlinkdata");
+				/**(_downlinkData+a) = "";
+				*(_downlinkData+a) +=response.charAt(j+1);
+				*(_downlinkData+a) +=response.charAt(j+2);
+				*/
+				i++;
+				altSerial->print(_downlinkData[i]);
+			}
+		}
+
+		return 1;									
+	}	 
+	else
+	{	
+	 	return 0; 									//No downlink
+	 	altSerial->print("No Downlink");
+	}			
+}
+
+int LoRaUART:: getDownlink(String* port, String* len, String* downData)
+{
+	downData=downlinkData;
+	*port = downlinkPort;
+	*len = downlinkDataLength; 
+}
