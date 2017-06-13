@@ -82,7 +82,9 @@ int LoRaUART::activateLoRa()
 	_CmdType = requestAPI;
 	_ATcmd = ATcmdActivateLoRa;
 	_RWmode = readCmd;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -191,7 +193,9 @@ int LoRaUART::restoreDefault()
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdRestoreDefault;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -244,7 +248,9 @@ long LoRaUART::getBaudRate()
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdBaudRate;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -380,7 +386,9 @@ int LoRaUART::getDeviceEUI(String* deviceEUI)
 	_RWmode = readCmd;
 	_ATcmd = ATcmdDeviceEUI;
 
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -512,7 +520,9 @@ int LoRaUART::getApplicationEUI(String* applicationEUI)
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdApplicationEUI;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -644,7 +654,9 @@ int LoRaUART::getApplicationKey(String* _applicationKey)
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdApplicationKey;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -714,7 +726,9 @@ int LoRaUART::getNetworkKey(String* _networkKey)
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdNetworkKey;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -785,7 +799,9 @@ int LoRaUART::getDeviceAddress(String* _deviceAddress)
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdDeviceAddr;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -856,7 +872,9 @@ int LoRaUART::getNetworkConnType()
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdNetworkConnType;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -924,7 +942,9 @@ int LoRaUART::getNetworkID(String* _networkID)
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdNetworkID;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -994,7 +1014,9 @@ int LoRaUART::getADRStatus()
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdADRStatus;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -1062,7 +1084,9 @@ int LoRaUART::getUplinkAckStatus()
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdUplinkAckStatus;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -1130,7 +1154,9 @@ int LoRaUART::getDataConfirmationRetries()
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdDataConfirmRetries;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -1194,7 +1220,9 @@ int LoRaUART::getDataRate()
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdDefaultDataRate;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -1258,7 +1286,9 @@ int LoRaUART::getPowerSavingStatus()
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdPowerSaveMode;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -1326,7 +1356,9 @@ int LoRaUART::getClassSelection()
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdClassSelection;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -1495,7 +1527,9 @@ int LoRaUART::moduleTest()
 	_CmdType = requestAPI;
 	_RWmode = readCmd;
 	_ATcmd = ATcmdModuleTestCmd;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf; 
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+
+	//Convert string requestCmd to a character array for passing it in altSerial->write() 
 	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
 	requestCmd.toCharArray(charArray,requestCmd.length()+1);
 	altSerial->write(charArray);
@@ -1542,6 +1576,12 @@ int LoRaUART::moduleTest()
 		}	
 	}
 }
+
+/* This function sends a uplink to the server with the data as provided in the packet.
+ 	The data types of the arguments to it are all of String class i.e. the portnum, datalength, and 
+ 	data should be a string object with values in hexadecimal equivalent.
+
+ 	Foe example- if length of data is 10, then variable datalength should be given as String datalength = "0A"*/
 
 int LoRaUART::sendUplink(String portnum, String datalength, String* data)
 {
