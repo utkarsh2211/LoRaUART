@@ -22,4 +22,5 @@ getPowerSavingStatus	KEYWORD2
 getClassSelection	KEYWORD2
 moduleTest	KEYWORD2
 saveConfigToEEPROM	KEYWORD2
+sendUplink	KEYWORD2
 retrieveConfigFromEEPROM	KEYWORD2	
