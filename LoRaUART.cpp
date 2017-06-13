@@ -22,7 +22,7 @@ LoRaUART::LoRaUART(int rxPin, int txPin)
 	altSerial->begin(9600);
 }
 
-uint32_t LoRaUART::initLoRa()
+int LoRaUART::initLoRa()
 {
 	requestCmd = "";	
 	_CmdType = requestAPI;
@@ -76,7 +76,7 @@ uint32_t LoRaUART::initLoRa()
 	}
 }	
 
-uint32_t LoRaUART::activateLoRa()
+int LoRaUART::activateLoRa()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -95,7 +95,11 @@ uint32_t LoRaUART::activateLoRa()
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -128,7 +132,7 @@ uint32_t LoRaUART::activateLoRa()
 	}
 }
 
-uint32_t LoRaUART::deactivateLoRa()
+int LoRaUART::deactivateLoRa()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -145,7 +149,11 @@ uint32_t LoRaUART::deactivateLoRa()
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -177,7 +185,7 @@ uint32_t LoRaUART::deactivateLoRa()
 	}
 }
 
-uint32_t LoRaUART::restoreDefault()
+int LoRaUART::restoreDefault()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -196,7 +204,11 @@ uint32_t LoRaUART::restoreDefault()
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -226,7 +238,7 @@ uint32_t LoRaUART::restoreDefault()
 	}
 }
 
-uint32_t LoRaUART::getBaudRate()
+long LoRaUART::getBaudRate()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -245,7 +257,11 @@ uint32_t LoRaUART::getBaudRate()
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -294,7 +310,7 @@ uint32_t LoRaUART::getBaudRate()
 
 }
 
-uint32_t LoRaUART::setBaudRate(uint32_t baudrate)
+int LoRaUART::setBaudRate(uint32_t baudrate)
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -321,7 +337,11 @@ uint32_t LoRaUART::setBaudRate(uint32_t baudrate)
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -353,7 +373,7 @@ uint32_t LoRaUART::setBaudRate(uint32_t baudrate)
 	}
 }
 
-uint32_t LoRaUART::getDeviceEUI(String* deviceEUI)
+int LoRaUART::getDeviceEUI(String* deviceEUI)
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -373,7 +393,11 @@ uint32_t LoRaUART::getDeviceEUI(String* deviceEUI)
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -421,7 +445,7 @@ uint32_t LoRaUART::getDeviceEUI(String* deviceEUI)
 
 }
 
-uint32_t LoRaUART::setDeviceEUI(String* deviceEUI, int EUIlength)
+int LoRaUART::setDeviceEUI(String* deviceEUI, int EUIlength)
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -448,7 +472,11 @@ uint32_t LoRaUART::setDeviceEUI(String* deviceEUI, int EUIlength)
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -478,7 +506,7 @@ uint32_t LoRaUART::setDeviceEUI(String* deviceEUI, int EUIlength)
 	}
 }
 
-uint32_t LoRaUART::getApplicationEUI(String* applicationEUI)
+int LoRaUART::getApplicationEUI(String* applicationEUI)
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -497,7 +525,11 @@ uint32_t LoRaUART::getApplicationEUI(String* applicationEUI)
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -544,7 +576,7 @@ uint32_t LoRaUART::getApplicationEUI(String* applicationEUI)
 	}
 }
 
-uint32_t LoRaUART::setApplicationEUI(String* applicationEUI, int EUIlength)
+int LoRaUART::setApplicationEUI(String* applicationEUI, int EUIlength)
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -570,7 +602,11 @@ uint32_t LoRaUART::setApplicationEUI(String* applicationEUI, int EUIlength)
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -602,7 +638,7 @@ uint32_t LoRaUART::setApplicationEUI(String* applicationEUI, int EUIlength)
 	}
 }
 
-uint32_t LoRaUART::getApplicationKey(String* _applicationKey)
+int LoRaUART::getApplicationKey(String* _applicationKey)
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -621,7 +657,11 @@ uint32_t LoRaUART::getApplicationKey(String* _applicationKey)
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -668,7 +708,7 @@ uint32_t LoRaUART::getApplicationKey(String* _applicationKey)
 	}
 }	
 
-uint32_t LoRaUART::getNetworkKey(String* _networkKey)
+int LoRaUART::getNetworkKey(String* _networkKey)
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -687,7 +727,11 @@ uint32_t LoRaUART::getNetworkKey(String* _networkKey)
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -735,7 +779,7 @@ uint32_t LoRaUART::getNetworkKey(String* _networkKey)
 	}
 }	
 
-uint32_t LoRaUART::getDeviceAddress(String* _deviceAddress)
+int LoRaUART::getDeviceAddress(String* _deviceAddress)
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -754,7 +798,11 @@ uint32_t LoRaUART::getDeviceAddress(String* _deviceAddress)
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -802,7 +850,7 @@ uint32_t LoRaUART::getDeviceAddress(String* _deviceAddress)
 	}
 }	
 
-uint32_t LoRaUART::getNetworkConnType()
+int LoRaUART::getNetworkConnType()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -821,7 +869,11 @@ uint32_t LoRaUART::getNetworkConnType()
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -866,7 +918,7 @@ uint32_t LoRaUART::getNetworkConnType()
 	}
 }
 
-uint32_t LoRaUART::getNetworkID(String* _networkID)
+int LoRaUART::getNetworkID(String* _networkID)
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -885,7 +937,11 @@ uint32_t LoRaUART::getNetworkID(String* _networkID)
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -932,7 +988,7 @@ uint32_t LoRaUART::getNetworkID(String* _networkID)
 	}
 }
 
-uint32_t LoRaUART::getADRStatus()
+int LoRaUART::getADRStatus()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -951,7 +1007,11 @@ uint32_t LoRaUART::getADRStatus()
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -996,7 +1056,7 @@ uint32_t LoRaUART::getADRStatus()
 	}	
 }
 
-uint32_t LoRaUART::getUplinkAckStatus()
+int LoRaUART::getUplinkAckStatus()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -1015,7 +1075,11 @@ uint32_t LoRaUART::getUplinkAckStatus()
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -1060,7 +1124,7 @@ uint32_t LoRaUART::getUplinkAckStatus()
 	}		
 }
 
-uint32_t LoRaUART::getDataConfirmationRetries()
+int LoRaUART::getDataConfirmationRetries()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -1079,7 +1143,11 @@ uint32_t LoRaUART::getDataConfirmationRetries()
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -1120,7 +1188,7 @@ uint32_t LoRaUART::getDataConfirmationRetries()
 	}	
 }
 
-uint32_t LoRaUART::getDataRate()
+int LoRaUART::getDataRate()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -1139,7 +1207,11 @@ uint32_t LoRaUART::getDataRate()
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -1180,7 +1252,7 @@ uint32_t LoRaUART::getDataRate()
 	}
 }
 
-uint32_t LoRaUART::getPowerSavingStatus()
+int LoRaUART::getPowerSavingStatus()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -1199,7 +1271,11 @@ uint32_t LoRaUART::getPowerSavingStatus()
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -1244,7 +1320,7 @@ uint32_t LoRaUART::getPowerSavingStatus()
 	}	
 }
 
-uint32_t LoRaUART::getClassSelection()
+int LoRaUART::getClassSelection()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -1263,7 +1339,11 @@ uint32_t LoRaUART::getClassSelection()
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -1308,7 +1388,7 @@ uint32_t LoRaUART::getClassSelection()
 	}
 }
 
-uint32_t LoRaUART::saveConfigToEEPROM()
+int LoRaUART::saveConfigToEEPROM()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -1358,7 +1438,7 @@ uint32_t LoRaUART::saveConfigToEEPROM()
 	}
 }
 
-uint32_t LoRaUART::retrieveConfigFromEEPROM()
+int LoRaUART::retrieveConfigFromEEPROM()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -1409,7 +1489,7 @@ uint32_t LoRaUART::retrieveConfigFromEEPROM()
 	}
 }
 
-uint32_t LoRaUART::moduleTest()
+int LoRaUART::moduleTest()
 {
 	requestCmd = "";
 	_CmdType = requestAPI;
@@ -1428,7 +1508,11 @@ uint32_t LoRaUART::moduleTest()
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -1459,13 +1543,19 @@ uint32_t LoRaUART::moduleTest()
 	}
 }
 
-uint32_t LoRaUART::sendUplink(String portnum, String datalength, String* data)
+int LoRaUART::sendUplink(String portnum, String datalength, String* data)
 {
 	requestCmd = "";
 	_CmdType = uplinkAPI;
 	_portnum = portnum;
-	_datalength = datalength;
-	requestCmd= requestCmd + _CmdType + ',' + _portnum + ',' + _datalength + ",";
+
+	char len[3];
+	len[0] = datalength.charAt(0);
+	len[1] = datalength.charAt(1);
+	len[2] = '\0';
+	_datalength = strtoul(len,NULL,10);
+
+	requestCmd= requestCmd + _CmdType + ',' + _portnum + ',' + datalength + ",";
 	for(int i=1; i<=_datalength; i++)
 	{
 		if(i!=_datalength)
@@ -1485,7 +1575,11 @@ uint32_t LoRaUART::sendUplink(String portnum, String datalength, String* data)
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-			_timeout=true;
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
 	}		
 	
 	while(altSerial->available()>0)
@@ -1498,7 +1592,7 @@ uint32_t LoRaUART::sendUplink(String portnum, String datalength, String* data)
 	int first,second;
 	unsigned long responseStatus;
 
-	if(response.substring(0,4) == "$UP")
+	if(response.substring(0,3) == "$UP")
 	{
 		first=response.indexOf(',');
 		second = response.indexOf(',',first+1);
@@ -1507,7 +1601,11 @@ uint32_t LoRaUART::sendUplink(String portnum, String datalength, String* data)
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
+		altSerial->print("Q value");
+		
+
 		responseStatus=strtoul(q,NULL,16);
+		altSerial->print(responseStatus);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;				//successfully uplink sent
