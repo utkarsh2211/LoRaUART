@@ -54,9 +54,15 @@ class LoRaUART
   	int moduleTest();
 
   	int sendUplink(String, String, String*);
+  	int checkDownlink();
+  	int getDownlink(String*, String*, String*);
 
 	String requestCmd = "";
 	SoftwareSerial *altSerial;
+	String downlinkPort = "";
+	String downlinkDataLength = "";
+
+	String* downlinkData;
 
   private:
 
