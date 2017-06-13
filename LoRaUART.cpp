@@ -1601,9 +1601,6 @@ int LoRaUART::sendUplink(String portnum, String datalength, String* data)
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		altSerial->print("Q value");
-		
-
 		responseStatus=strtoul(q,NULL,16);
 		altSerial->print(responseStatus);
 		switch(responseStatus)
