@@ -40,19 +40,19 @@ int LoRaUART::initLoRa()
 	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
-	if(millis()-t >1000)
+	{
+		if(millis()-t >1000)
 	{
 		_timeout=true;
 		altSerial->println("Error");
 		return 1000;
 	}
-	else
-	{			
-		while(altSerial->available())
-		{
-			_incomingByte = (char)altSerial->read();
-			response += _incomingByte;
-		}	
+	}		
+	
+	while(altSerial->available()>0)
+	{	
+		_incomingByte = (char)altSerial->read();
+		response += _incomingByte;
 	}
 
 	char q[3];
@@ -66,7 +66,12 @@ int LoRaUART::initLoRa()
 		q[0]=response.charAt(second+1);
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
+		altSerial->print("q value");
+		altSerial->print(q);
+
 		responseStatus=strtoul(q,NULL,16);
+		altSerial->print("status");
+		altSerial->print(responseStatus);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
