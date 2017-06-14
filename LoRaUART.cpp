@@ -875,6 +875,67 @@ int LoRaUART::getDeviceAddress(String* _deviceAddress)
 	}
 }	
 
+int LoRaUART::setDeviceAddress(String* _deviceAddress, int deviceAddressLength)
+{
+	requestCmd = "";
+	_CmdType = requestAPI;
+	_RWmode = writeCmd;
+	_ATcmd = ATcmdDeviceAddr;
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + ",";
+	for(int i=1; i<=deviceAddressLength; i++)
+	{
+		if(i!=deviceAddressLength)
+			requestCmd = requestCmd + *_deviceAddress + ',';
+		else
+			requestCmd = requestCmd + *_deviceAddress;
+		_deviceAddress++;
+	}
+	requestCmd= requestCmd + crlf;
+
+	for(int i=0; requestCmd.charAt(i)!='\0'; i++)
+		altSerial->write(requestCmd.charAt(i));
+
+	int t= millis();
+
+	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+
+	while(!altSerial->available())
+	{
+		if(millis()-t >1000)
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
+	}		
+	
+	while(altSerial->available()>0)
+	{
+		_incomingByte = altSerial->read();
+		response += _incomingByte;
+	}
+
+	char q[3];
+	int first,second;
+	unsigned long responseStatus;
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+		responseStatus = strtoul(q,NULL,16);
+		switch(responseStatus)
+		{
+			case 0: return 1; break;
+			case 1: return -1; break;
+			case 2: return -2; break;
+		}	
+	}
+}
+
 int LoRaUART::getNetworkConnType()
 {
 	requestCmd = "";
@@ -1660,77 +1721,6 @@ int LoRaUART::sendUplink(String portnum, String datalength, String* data)
 	}
 }
 
-/*int LoRaUART:: checkDownlink(String* port, String* dataLen, String* downData)
-{
-	response="";
-	downlinkPort = "";
-	downlinkDataLength = "";	
-
-	if(altSerial->available()>0)
-	{
-		while(altSerial->available()>0)
-		{	
-			_incomingByte = altSerial->read();
-			response += _incomingByte;
-		}	
-		altSerial->print("response");
-		altSerial->print(response);
-	}
-
-
-	if(response.substring(0,5) == "$DOWN")  			//Downlink received
-	{
-		altSerial->print("Downlink");
-
-		int first,second,third;
-		first = response.indexOf(',');
-		second = response.indexOf(',',first+1);
-		third = response.indexOf(',',second+1);
-
-		downlinkPort = downlinkPort + response.charAt(first+1)+ response.charAt(first+2);
-		altSerial->print("downlinkPort");
-		altSerial->print(downlinkPort);
-		downlinkDataLength = downlinkDataLength + response.charAt(second+1)+ response.charAt(second+2);	
-		altSerial->print("Downlinklength");
-		altSerial->print(downlinkDataLength);
-		int len= downlinkDataLength.toInt();
-		int commas=len-1;
-		int step=2*len+commas;
-		int i=0;
-
-		for(int j = third;j<=(third+step); j++)
-		{
-			//altSerial->print(response.charAt(j));	
-			if(response.charAt(j)==',')
-			{
-				_downlinkData[i] = "";
-				//altSerial->print(_downlinkData[i]);
-				_downlinkData[i]+= response.charAt(j+1);
-				_downlinkData[i]+= response.charAt(j+2);
-				altSerial->print("Downlinkdata");
-				//(_downlinkData+a) = "";
-				//(_downlinkData+a) +=response.charAt(j+1);
-				//(_downlinkData+a) +=response.charAt(j+2);
-				altSerial->print(_downlinkData[i]);
-				i++;
-			}
-		}
-		altSerial->print("inside check");
-		altSerial->print(*(_downlinkData));
-		*port = downlinkPort;
-		*dataLen = downlinkDataLength;
-		downData = _downlinkData;
-		altSerial->print("Downdata");
-		altSerial->print(*(downData)); 
-		return 1;									
-	}	 
-	else
-	{	
-	 	return 0; 									//No downlink
-	 	altSerial->print("No Downlink");
-	}			
-}
-*/
 
 int LoRaUART::checkDownlink(String* port, String* dataLen, String* downlinkData)
 {
