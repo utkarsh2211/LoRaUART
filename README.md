@@ -30,8 +30,20 @@ byte then use ',' as separator.</li>
   <td>"\r\n"</td>
 </tr>
 </table>
-Response API Format:
-START, AT Command, Status, Value <CR-LF>
+
+<b>Response API Format:</b><br/>
+
+<table>
+<tr>
+  <th>
+    <td>START,</td>
+    <td>AT Command,</td>
+    <td>Status,</td>
+    <td>Value</td>
+    <td><CR-LF></td>
+  </th>
+</tr>
+</table>
 􀍞$RES􀍟 1 Byte 1Byte
 00 –success
 01-invalid
