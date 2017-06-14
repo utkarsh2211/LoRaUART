@@ -13,13 +13,11 @@ byte then use ',' as separator.</li>
 <b>Request API Format:</b><br/>
 <table>
 <tr>
-  <th>
-    <td>START,</td>
-    <td>Read/Write,</td>
-    <td>AT Command,</td>
-    <td>Value</td>
-    <td><CR-LF></td>
-  </th>
+  <th>START,</th>
+  <th>Read/Write,</th>
+  <th>AT Command,</th>
+  <th>Value</th>
+  <th><CR-LF></th>
 </tr>
 <tr>
   <td>"$CMD"</td>
@@ -35,13 +33,11 @@ byte then use ',' as separator.</li>
 
 <table>
 <tr>
-  <th>
-    <td>START,</td>
-    <td>AT Command,</td>
-    <td>Status,</td>
-    <td>Value</td>
-    <td><CR-LF></td>
-  </th>
+    <th>START,</th>
+    <th>AT Command,</th>
+    <th>Status,</th>
+    <th>Value</th>
+    <th><CR-LF></th>
 </tr>
 </table>
 􀍞$RES􀍟 1 Byte 1Byte
