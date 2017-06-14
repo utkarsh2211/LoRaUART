@@ -23,6 +23,8 @@ Arduino class library for communicating with LoRa module via UART.
 #include "Arduino.h"
 #include "SoftwareSerial.h"
 
+#define maxLenDownlinkdata 50
+
 class LoRaUART
 {
   public:
@@ -54,15 +56,11 @@ class LoRaUART
   	int moduleTest();
 
   	int sendUplink(String, String, String*);
-  	int checkDownlink();
-  	int getDownlink(String*, String*, String*);
+  	int checkDownlink(String*, String*, String*);
 
 	String requestCmd = "";
 	SoftwareSerial *altSerial;
-	String downlinkPort = "";
-	String downlinkDataLength = "";
 
-	String* downlinkData;
 
   private:
 
@@ -100,6 +98,7 @@ class LoRaUART
 	String response = "";
 	String crlf= "\r\n";
 	String _baudrate;
+	//String _downlinkData[maxLenDownlinkdata];
 
 	uint8_t _getbaud;
 	String _portnum;
