@@ -73,28 +73,6 @@ class LoRaUART
   	String downlinkAPI = "$DOWN";
   	String readCmd = "00";
   	String writeCmd = "01";
-  	String ATcmdRestoreDefault        = "00";
-  	String ATcmdInitLoRa              = "01";
-  	String ATcmdDeactivateLoRa        = "02";
-  	String ATcmdActivateLoRa          = "03";
-  	String ATcmdBaudRate              = "04";
-  	String ATcmdDeviceEUI             = "05";
-  	String ATcmdApplicationEUI        = "06";
-  	String ATcmdApplicationKey        = "07";
-  	String ATcmdNetworkKey            = "08";
-  	String ATcmdDeviceAddr            = "09";
-  	String ATcmdNetworkConnType       = "0A";
-  	String ATcmdNetworkID             = "0B";
-	String ATcmdADRStatus             = "0C";
-	String ATcmdUplinkAckStatus       = "0D";
-	String ATcmdDataConfirmRetries    = "0E";
-	String ATcmdDefaultDataRate       = "0F";
-	String ATcmdPowerSaveMode         = "10";
-	String ATcmdClassSelection        = "11";
-	String ATcmdSaveConfigEEPROM      = "12";
-	String ATcmdRetrieveConfigEEPROM  = "13";		
-	String ATcmdModuleTestCmd         = "FF";
-
 
 	String _RWmode;
 	String _ATcmd ;
