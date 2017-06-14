@@ -1,13 +1,15 @@
 # LoRaUART
 Arduino library for communication to LoRa module via UART
 
-LORA UART PROTOCOL
- Every command and response through UART should be in String format.
- Every command string should end with <CR-LF> (􀍞\r\n􀍟).
- Every numerical value in command string should be Hexadecimal number in form of single
-Byte.
- Every terms in command string are separated by 􀍚,􀍛. If any data consist of more than single
-byte then use 􀍚,􀍛 as separator.
+General convention used in commands of LoRa network<br>
+<ul>
+<li>Every command and response through UART should be in String format.</li>
+<li>Every command string should end with <CR-LF> ('\r\n').</li>
+<li>Every numerical value in command string should be Hexadecimal number in form of single
+Byte.</li>
+<li>Every terms in command string are separated by ','. If any data consist of more than single
+byte then use ',' as separator.</li>
+</ul>
 Request API Format:
 START, Read/Write, AT Command, Value <CR-LF>
 􀍞$CMD􀍟 1 Byte
