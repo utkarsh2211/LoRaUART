@@ -27,6 +27,37 @@ LoRaUART::LoRaUART(int rxPin, int txPin)
 	altSerial->begin(9600);
 }
 
+LoRaUART::~LoRaUART()
+{
+	/*delete requestAPI;
+  	delete uplinkAPI;
+  	delete downlinkAPI;
+  	delete readCmd;
+  	delete writeCmd;
+  	delete ATcmdRestoreDefault;
+  	delete ATcmdInitLoRa;
+  	delete ATcmdDeactivateLoRa;
+  	delete ATcmdActivateLoRa;
+  	delete ATcmdBaudRate;
+  	delete ATcmdDeviceEUI;
+  	delete ATcmdApplicationEUI;
+  	delete ATcmdApplicationKey;
+  	delete ATcmdNetworkKey;
+  	delete ATcmdDeviceAddr;
+  	delete ATcmdNetworkConnType;
+  	delete ATcmdNetworkID;
+	delete ATcmdADRStatus;
+	delete ATcmdUplinkAckStatus;
+	delete ATcmdDataConfirmRetries;
+	delete ATcmdDefaultDataRate;
+	delete ATcmdPowerSaveMode;
+	delete ATcmdClassSelection;
+	delete ATcmdSaveConfigEEPROM;
+	delete ATcmdRetrieveConfigEEPROM;		
+	delete ATcmdModuleTestCmd;*/
+}
+
+
 int LoRaUART::initLoRa()
 {
 	requestCmd = "";	
