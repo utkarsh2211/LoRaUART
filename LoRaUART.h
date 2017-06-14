@@ -43,6 +43,7 @@ class LoRaUART
   	int getApplicationKey(String*);
   	int getNetworkKey(String*);
   	int getDeviceAddress(String*);
+  	int setDeviceAddress(String*, int);
   	int getNetworkConnType();
   	int getNetworkID(String*);
   	int getADRStatus();
