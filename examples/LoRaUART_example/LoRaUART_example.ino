@@ -45,57 +45,57 @@ void loop()
   Serial.println("Testing LoRa module by sending a test command");
   switch(LoraModule.moduleTest())
   {
-   case  1 : Serial.println("LoRa Module successfully tested");
-   case -1 : Serial.println("Invalid Parameters provided");
-   case -2 : Serial.println("AT command error");
+   case  1 : Serial.println("LoRa Module successfully tested");break;
+   case -1 : Serial.println("Invalid Parameters provided");break;
+   case -2 : Serial.println("AT command error");break;
   }
 
   Serial.println("Loading Default values to the various attributes of the module");
   switch(LoraModule.restoreDefault())
   {
-   case  1 : Serial.println("Default values loaded successfully");
-   case -1 : Serial.println("Invalid Parameters provided");
-   case -2 : Serial.println("AT command error");
+   case  1 : Serial.println("Default values loaded successfully");break;
+   case -1 : Serial.println("Invalid Parameters provided");break;
+   case -2 : Serial.println("AT command error");break;
   }
 
   Serial.println("Set Device Address");
   switch(LoraModule.setDeviceAddress(deviceAddress, devAddrLength))
   {
-   case  1 : Serial.println("Device Address set successfully");
-   case -1 : Serial.println("Invalid Parameters provided");
-   case -2 : Serial.println("AT command error");
+   case  1 : Serial.println("Device Address set successfully");break;
+   case -1 : Serial.println("Invalid Parameters provided");break;
+   case -2 : Serial.println("AT command error");break;
   }
 
   Serial.println("Set Network Key");
   switch(LoraModule.setNetworkKey(networkKey, netKeyLength))
   {
-   case  1 : Serial.println("Network Key Set successfully");
-   case -1 : Serial.println("Invalid Parameters provided");
-   case -2 : Serial.println("AT command error");
+   case  1 : Serial.println("Network Key Set successfully");break;
+   case -1 : Serial.println("Invalid Parameters provided");break;
+   case -2 : Serial.println("AT command error");break;
   }
 
   Serial.println("Set Application Key");
   switch(LoraModule.setApplicationKey(deviceAddress, devAddrLength))
   {
-   case  1 : Serial.println("Application Key set successfully");
-   case -1 : Serial.println("Invalid Parameters provided");
-   case -2 : Serial.println("AT command error");
+   case  1 : Serial.println("Application Key set successfully");break;
+   case -1 : Serial.println("Invalid Parameters provided");break;
+   case -2 : Serial.println("AT command error");break;
   } 
 
   Serial.println("Initialising LoRa module");
   switch(LoraModule.initLoRa())
   {
-   case  1 : Serial.println("Module initialised successfully");
-   case -1 : Serial.println("Invalid Parameters provided");
-   case -2 : Serial.println("AT command error");
+   case  1 : Serial.println("Module initialised successfully");break;
+   case -1 : Serial.println("Invalid Parameters provided");break;
+   case -2 : Serial.println("AT command error");break;
   }
 
   Serial.println("Activating LoRa module");
   switch(LoraModule.activateLoRa())
   {
-   case  1 : Serial.println("Module activated successfully");
-   case -1 : Serial.println("Invalid Parameters provided");
-   case -2 : Serial.println("AT command error");
+   case  1 : Serial.println("Module activated successfully");break;
+   case -1 : Serial.println("Invalid Parameters provided");break;
+   case -2 : Serial.println("AT command error");break;
   }
 
 /* The format of sendUplink method is : int sendUplink(String uplinkPort, String uplinkDataLength, String* uplinkData) 
@@ -108,8 +108,8 @@ void loop()
   Serial.println("Sending an Uplink request");
   switch(LoraModule.sendUplink(uplinkPort,uplinkDataLength, uplinkData))
   {
-   case  1 : Serial.println("Uplink sent successfully");
-   case -1 : Serial.println("Uplink failed");
+   case  1 : Serial.println("Uplink sent successfully");break;
+   case -1 : Serial.println("Uplink failed");break;
   }
 
 /* The checkDownlink method has been commented but it can be used as per user's choice simply by uncommenting
