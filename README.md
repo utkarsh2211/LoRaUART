@@ -195,7 +195,7 @@ byte then use ',' as separator.</li>
 <th>Port Number,</th>
 <th>Data Length,</th>
 <th>Data,</th>
-<th>&ltCR-LF&rt</th>
+<th>&ltCR-LF&gt</th>
 </tr>
 <tr>
 <td>For Uplink</td>
@@ -224,7 +224,7 @@ lora server.<br/><br/>
 <th>Port Number,</th>
 <th>Data Length,</th>
 <th>Data,</th>
-<th>&ltCR-LF&rt</th>
+<th>&ltCR-LF&gt</th>
 </tr>
 <tr>
 <td>"$DOWN"</td>
