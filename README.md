@@ -1,7 +1,7 @@
 # LoRaUART
 Arduino library for communication to LoRa module via UART
 
-General convention used in commands of LoRa network<br>
+General convention used in commands of LoRa network<br/>
 <ul>
 <li>Every command and response through UART should be in String format.</li>
 <li>Every command string should end with <CR-LF> ('\r\n').</li>
@@ -10,14 +10,26 @@ Byte.</li>
 <li>Every terms in command string are separated by ','. If any data consist of more than single
 byte then use ',' as separator.</li>
 </ul>
-Request API Format:
-START, Read/Write, AT Command, Value <CR-LF>
-􀍞$CMD􀍟 1 Byte
-(00 read and 01
-write)
-1 Byte 1 or more Byte
-separated by 􀍚,􀍛
-􀍞\r\n􀍟
+<b>Request API Format:</b><br/>
+<table>
+<tr>
+  <th>
+    <td>START,</td>
+    <td>Read/Write,</td>
+    <td>AT Command,</td>
+    <td>Value</td>
+    <td><CR-LF></td>
+  </th>
+</tr>
+<tr>
+  <td>"$CMD"</td>
+  <td>1 Byte<br/>
+  (00 read and 01 write)</td>
+  <td>1 Byte</td>
+  <td>1 or more Byte separated by ','</td>
+  <td>"\r\n"</td>
+</tr>
+</table>
 Response API Format:
 START, AT Command, Status, Value <CR-LF>
 􀍞$RES􀍟 1 Byte 1Byte
