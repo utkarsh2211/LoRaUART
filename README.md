@@ -215,7 +215,7 @@ byte then use ',' as separator.</li>
 </tr>
 </table>
 If ack is enable then it will send 􀍞$UP,01,00\r\n􀍟 whenever it receives an acknowledgement from
-lora server.<br/>
+lora server.<br/><br/>
 
 <b>Downlink API Format:</b><br/>
 <table>
