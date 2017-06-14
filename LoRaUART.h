@@ -41,7 +41,9 @@ class LoRaUART
   	int getApplicationEUI(String*);
   	int setApplicationEUI(String*, int);
   	int getApplicationKey(String*);
+  	int setApplicationKey(String*, int);
   	int getNetworkKey(String*);
+  	int setNetworkKey(String*, int);
   	int getDeviceAddress(String*);
   	int setDeviceAddress(String*, int);
   	int getNetworkConnType();
