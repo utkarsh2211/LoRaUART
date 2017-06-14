@@ -1773,7 +1773,7 @@ int LoRaUART::moduleTest()
  	The data types of the arguments to it are all of String class i.e. the portnum, datalength, and 
  	data should be a string object with values in hexadecimal equivalent.
 
- 	Foe example- if length of data is 10, then variable datalength should be given as String datalength = "0A"*/
+ 	For example- if length of data is 10, then variable datalength should be given as String datalength = "0A"*/
 
 int LoRaUART::sendUplink(String portnum, String datalength, String* data)
 {
@@ -1843,6 +1843,10 @@ int LoRaUART::sendUplink(String portnum, String datalength, String* data)
 	}
 }
 
+/*	For calling checkDownlink function, the arguments  must be passed as
+		checkDownlink(&port,&datalength,data)
+	where data is an array of max size 50 
+*/	
 
 int LoRaUART::checkDownlink(String* port, String* dataLen, String* downlinkData)
 {
