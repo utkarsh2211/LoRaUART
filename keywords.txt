@@ -23,4 +23,5 @@ getClassSelection	KEYWORD2
 moduleTest	KEYWORD2
 saveConfigToEEPROM	KEYWORD2
 sendUplink	KEYWORD2
-retrieveConfigFromEEPROM	KEYWORD2	
+retrieveConfigFromEEPROM	KEYWORD2
+checkDownlink	KEYWORD2	
