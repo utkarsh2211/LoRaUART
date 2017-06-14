@@ -24,4 +24,7 @@ moduleTest	KEYWORD2
 saveConfigToEEPROM	KEYWORD2
 sendUplink	KEYWORD2
 retrieveConfigFromEEPROM	KEYWORD2
-checkDownlink	KEYWORD2	
+checkDownlink	KEYWORD2
+setDeviceAddress	KEYWORD2
+setNetworkKey	KEYWORD2
+setApplicationKey	KEYWORD2	
