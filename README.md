@@ -39,15 +39,20 @@ byte then use ',' as separator.</li>
     <th>Value</th>
     <th><CR-LF></th>
 </tr>
+<tr>
+<td>"$RES"</td>
+<td>1 Byte</td>
+<td>1 Byte<br/>
+    00 –success<br/>
+    01-invalid parameter<br/>
+    02-AT command error<br/></td>
+ <td>[Optional]</td>
+ <td>"\r\n"</td>
+</tr>
 </table>
-􀍞$RES􀍟 1 Byte 1Byte
-00 –success
-01-invalid
-parameter
-02-AT command
-error
-[Optional] 􀍞\r\n􀍟
-List of Request Api:
+
+<b>List of Request Api:</b><br/>
+<table>
 API COMMAND DESCRIPTION PARAMETER DEFAULTS
 $CMD,00,00<CR-LF> Restore defaults _ _
 $CMD,00,01<CR-LF> Initialize LoraWan _ _
