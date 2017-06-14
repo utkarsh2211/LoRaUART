@@ -728,6 +728,67 @@ int LoRaUART::getApplicationKey(String* _applicationKey)
 			case 2: return -2; break;
 		}	
 	}
+}
+
+int LoRaUART::setApplicationKey(String* _applicationKey, int applicationKeyLen)
+{
+	requestCmd = "";
+	_CmdType = requestAPI;
+	_RWmode = writeCmd;
+	_ATcmd = ATcmdApplicationKey;
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + ",";
+	for(int i=1; i<=applicationKeyLen; i++)
+	{
+		if(i!=applicationKeyLen)
+			requestCmd = requestCmd + *_applicationKey + ',';
+		else
+			requestCmd = requestCmd + *_applicationKey;
+		_applicationKey++;
+	}
+	requestCmd= requestCmd + crlf;
+
+	for(int i=0; requestCmd.charAt(i)!='\0'; i++)
+		altSerial->write(requestCmd.charAt(i));
+
+	int t= millis();
+
+	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+
+	while(!altSerial->available())
+	{
+		if(millis()-t >1000)
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
+	}		
+	
+	while(altSerial->available()>0)
+	{
+		_incomingByte = altSerial->read();
+		response += _incomingByte;
+	}
+
+	char q[3];
+	int first,second;
+	unsigned long responseStatus;
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+		responseStatus = strtoul(q,NULL,16);
+		switch(responseStatus)
+		{
+			case 0: return 1; break;
+			case 1: return -1; break;
+			case 2: return -2; break;
+		}	
+	}
 }	
 
 int LoRaUART::getNetworkKey(String* _networkKey)
@@ -793,6 +854,67 @@ int LoRaUART::getNetworkKey(String* _networkKey)
 			}
 		}
 
+		switch(responseStatus)
+		{
+			case 0: return 1; break;
+			case 1: return -1; break;
+			case 2: return -2; break;
+		}	
+	}
+}
+
+int LoRaUART::setNetworkKey(String* _networkKey, int networkKeyLength)
+{
+	requestCmd = "";
+	_CmdType = requestAPI;
+	_RWmode = writeCmd;
+	_ATcmd = ATcmdNetworkKey;
+	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + ",";
+	for(int i=1; i<=networkKeyLength; i++)
+	{
+		if(i!=networkKeyLength)
+			requestCmd = requestCmd + *_networkKey + ',';
+		else
+			requestCmd = requestCmd + *_networkKey;
+		_networkKey++;
+	}
+	requestCmd= requestCmd + crlf;
+
+	for(int i=0; requestCmd.charAt(i)!='\0'; i++)
+		altSerial->write(requestCmd.charAt(i));
+
+	int t= millis();
+
+	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+
+	while(!altSerial->available())
+	{
+		if(millis()-t >1000)
+	{
+		_timeout=true;
+		altSerial->println("Error");
+		return 1000;
+	}
+	}		
+	
+	while(altSerial->available()>0)
+	{
+		_incomingByte = altSerial->read();
+		response += _incomingByte;
+	}
+
+	char q[3];
+	int first,second;
+	unsigned long responseStatus;
+
+	if(response.substring(0,4) == "$RES")
+	{
+		first=response.indexOf(',');
+		second = response.indexOf(',',first+1);
+		q[0]=response.charAt(second+1);
+		q[1]=response.charAt(second+2);
+		q[2]='\0';
+		responseStatus = strtoul(q,NULL,16);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
