@@ -54,8 +54,7 @@ byte then use ',' as separator.</li>
 <b>List of Request Api:</b><br/>
 <table>
 <tr>
-<th>API</th>
-<th>COMMAND</th>
+<th>API COMMAND</th>
 <th>DESCRIPTION</th>
 <th>PARAMETER</th>
 <th>DEFAULTS</th>
@@ -84,13 +83,20 @@ byte then use ',' as separator.</li>
 <td>_</td>
 <td>_</td>
 </tr>
-$CMD,00,04&ltCR-LF&gt (to read)
-$CMD,01,04,<val>&ltCR-LF&gt( to
-change)
-Baud Rate 00-04 01
-00(4800), 01(9600),
-02(19200), 03(57600)
-04(115200)
-$CMD,00,05&ltCR-LF&gt (to
-$CMD,01,05,<val>&ltCR-LF&gt( to
-Device EUI 8 Bytes 01,02,03,04,05,06,07,08
+<tr>
+<td>$CMD,00,04&ltCR-LF&gt (to read)<br/>$CMD,01,04,&ltval&gt&ltCR-LF&gt (to change)</td>
+<td>Baud Rate</td>
+<td>00-04</td>
+<td> 01<br/> 00(4800), 01(9600), 02(19200), 03(57600), 04(115200)</td>
+</tr>
+ <tr>
+<td>$CMD,00,05&ltCR-LF&gt (to read) <br/>$CMD,01,05,&ltval&gt&ltCR-LF&gt (to change)</td>
+<td>Device EUI</td>
+<td>8 Bytes</td>
+<td>01,02,03,04,05,06,07,08</td>
+</tr>
+</table>
+
+ 
+
+  
