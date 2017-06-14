@@ -29,6 +29,7 @@ class LoRaUART
 {
   public:
   	LoRaUART(int,int);
+  	~LoRaUART();
 
   	int initLoRa();
   	int activateLoRa();
