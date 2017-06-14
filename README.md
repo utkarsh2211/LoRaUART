@@ -17,7 +17,7 @@ byte then use ',' as separator.</li>
   <th>Read/Write,</th>
   <th>AT Command,</th>
   <th>Value</th>
-  <th><CR-LF></th>
+  <th>&ltCR-LF&gt</th>
 </tr>
 <tr>
   <td>"$CMD"</td>
@@ -37,7 +37,7 @@ byte then use ',' as separator.</li>
     <th>AT Command,</th>
     <th>Status,</th>
     <th>Value</th>
-    <th><CR-LF></th>
+    <th>&ltCR-LF&gt</th>
 </tr>
 <tr>
 <td>"$RES"</td>
@@ -53,20 +53,44 @@ byte then use ',' as separator.</li>
 
 <b>List of Request Api:</b><br/>
 <table>
-API COMMAND DESCRIPTION PARAMETER DEFAULTS
-$CMD,00,00<CR-LF> Restore defaults _ _
-$CMD,00,01<CR-LF> Initialize LoraWan _ _
-$CMD,00,02<CR-LF> Deactivate
-LoRAWan
-_ _
-$CMD,00,03<CR-LF> Activate LoraWan _ _
-$CMD,00,04<CR-LF> (to read)
-$CMD,01,04,<val><CR-LF>( to
+<tr>
+<th>API</th>
+<th>COMMAND</th>
+<th>DESCRIPTION</th>
+<th>PARAMETER</th>
+<th>DEFAULTS</th>
+</tr>
+<tr>
+<td>$CMD,00,00&ltCR-LF&gt</td>
+<td>Restore defaults</td>
+<td>_</td>
+<td>_</td>
+</tr>
+<tr>
+<td>$CMD,00,01&ltCR-LF&gt</td>
+<td>Initialize LoraWan</td>
+<td>_</td>
+<td>_</td>
+</tr>
+<tr>
+<td>$CMD,00,02&ltCR-LF&gt</td>
+<td>Deactivate LoRAWan</td>
+<td>_</td>
+<td>_</td>
+</tr>
+<tr>
+<td>$CMD,00,03&ltCR-LF&gt</td>
+<td>Activate LoraWan</td>
+<td>_</td>
+<td>_</td>
+</tr>
+$CMD,00,04&ltCR-LF&gt (to read)
+$CMD,01,04,<val>&ltCR-LF&gt( to
 change)
 Baud Rate 00-04 01
 00(4800), 01(9600),
 02(19200), 03(57600)
 04(115200)
-$CMD,00,05<CR-LF> (to
-$CMD,01,05,<val><CR-LF>( to
+$CMD,00,05&ltCR-LF&gt (to
+$CMD,01,05,<val>&ltCR-LF&gt( to
 Device EUI 8 Bytes 01,02,03,04,05,06,07,08
