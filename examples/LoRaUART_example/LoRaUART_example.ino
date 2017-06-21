@@ -141,8 +141,9 @@ void loop()
   Serial.println("Checking Downlink");  
   delay(100);
 
-  LoraModule.checkDownlink(&port,&datalength,downlinkData);
-    Serial.println("Port number");
+  if(LoraModule.checkDownlink(&port,&datalength,downlinkData)==1)
+    {
+      Serial.println("Port number");
     Serial.println(port);
     Serial.println("Length of the data");
     Serial.println(datalength);
@@ -151,8 +152,8 @@ void loop()
     for(int i=0; i<datalength; i++)
     Serial.println(*(downlinkData+i));
    
-  
-    
-    
+    }
+    else
+      Serial.println("No downlink");      
 }
 

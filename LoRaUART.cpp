@@ -1835,7 +1835,7 @@ int LoRaUART::checkDownlink(uint8_t* port, uint8_t* dataLen, uint8_t* downData)
 	String response="";
 	char _incomingByte;
 
-	while(!altSerial->available());
+	//while(!altSerial->available());
 
 	if(altSerial->available()>0)
 	{
@@ -1845,12 +1845,14 @@ int LoRaUART::checkDownlink(uint8_t* port, uint8_t* dataLen, uint8_t* downData)
 			response += _incomingByte;
 		}	
 	}
+	else
+		return -3;
 
 	Serial.println("resp");
 	Serial.println(response);
 	delay(100);
 	int downSubstring = response.indexOf("$DOWN");
-	char *charArray;
+	char charArray[100];
 	int index = 0;
 	int i = downSubstring;
 	for(; response.charAt(i)!='\n';i++,index++)
