@@ -1846,31 +1846,47 @@ int LoRaUART::checkDownlink(uint8_t* port, uint8_t* dataLen, uint8_t* downData)
 		}	
 	}
 
+	Serial.println("resp");
+	Serial.println(response);
+	delay(100);
+	int downSubstring = response.indexOf("$DOWN");
+	char *charArray;
+	int index = 0;
+	int i = downSubstring;
+	for(; response.charAt(i)!='\n';i++,index++)
+	{	
+		*(charArray+index) = response.charAt(i);
+	}	
+	*(charArray+index) = response.charAt(i);
+	index++;
+	*(charArray+index) ='\0';
+	String downresp = String(charArray);
+
 	int first,second,third;
 	char value[3];
 
-	if(response.substring(0,5) == "$DOWN")
+	if(downresp.substring(0,5) == "$DOWN")
 	{
-		first=response.indexOf(',');
-		second = response.indexOf(',',first+1);
-		third = response.indexOf(',',second+1);
+		first=downresp.indexOf(',');
+		second = downresp.indexOf(',',first+1);
+		third = downresp.indexOf(',',second+1);
 
-		value[0]=response.charAt(first+1);
-		value[1]=response.charAt(first+2);
+		value[0]=downresp.charAt(first+1);
+		value[1]=downresp.charAt(first+2);
 		value[2]='\0';
 		*port = strtol(value,NULL,16);
 
-		value[0]=response.charAt(second+1);
-		value[1]=response.charAt(second+2);
+		value[0]=downresp.charAt(second+1);
+		value[1]=downresp.charAt(second+2);
 		value[2]='\0';
 		*dataLen = strtol(value,NULL,16);
 
-		for(int j = third, a=0; response.charAt(j)!='\r'; j++)
+		for(int j = third, a=0; downresp.charAt(j)!='\r'; j++)
 		{
-			if(response.charAt(j)==',')
+			if(downresp.charAt(j)==',')
 			{	
-				value[0]=response.charAt(j+1);
-				value[1]=response.charAt(j+2);
+				value[0]=downresp.charAt(j+1);
+				value[1]=downresp.charAt(j+2);
 				value[2]='\0';
 				*(downData+a) = strtol(value,NULL,16);
 				a++;
