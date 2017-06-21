@@ -29,7 +29,6 @@ class LoRaUART
 {
   public:
   	LoRaUART(int,int);
-  	~LoRaUART();
 
   	int initLoRa();
   	int activateLoRa();
@@ -37,18 +36,18 @@ class LoRaUART
   	int restoreDefault();
   	long getBaudRate();
   	int setBaudRate(uint32_t);
-  	int getDeviceEUI(String*);
-  	int setDeviceEUI(String*, int);
-  	int getApplicationEUI(String*);
-  	int setApplicationEUI(String*, int);
-  	int getApplicationKey(String*);
-  	int setApplicationKey(String*, int);
-  	int getNetworkKey(String*);
-  	int setNetworkKey(String*, int);
-  	int getDeviceAddress(String*);
-  	int setDeviceAddress(String*, int);
+  	int getDeviceEUI(uint8_t*);
+  	int setDeviceEUI(uint8_t*);
+  	int getApplicationEUI(uint8_t*);
+  	int setApplicationEUI(uint8_t*);
+  	int getApplicationKey(uint8_t*);
+  	int setApplicationKey(uint8_t*);
+  	int getNetworkKey(uint8_t*);
+  	int setNetworkKey(uint8_t*);
+  	int getDeviceAddress(uint8_t*);
+  	int setDeviceAddress(uint8_t*);
   	int getNetworkConnType();
-  	int getNetworkID(String*);
+  	int getNetworkID(uint8_t*);
   	int getADRStatus();
   	int getUplinkAckStatus();
   	int getDataConfirmationRetries();
@@ -59,48 +58,13 @@ class LoRaUART
   	int retrieveConfigFromEEPROM();
   	int moduleTest();
 
-  	int sendUplink(String, String, String*);
-  	int checkDownlink(String*, String*, String*);
-
-	String requestCmd = "";
-	SoftwareSerial *altSerial;
-
+  	int sendUplink(int, int, uint8_t*);
+  	int checkDownlink(uint8_t*, uint8_t*, uint8_t*);
 
   private:
-
-  	String requestAPI = "$CMD";
-  	String uplinkAPI = "$UP";
-  	String downlinkAPI = "$DOWN";
-  	String readCmd = "00";
-  	String writeCmd = "01";
-
-	String _RWmode;
-	String _ATcmd ;
-	String _CmdType;
-	String response = "";
-	String crlf= "\r\n";
-	String _baudrate;
-	//String _downlinkData[maxLenDownlinkdata];
-
-	uint8_t _getbaud;
-	String _portnum;
-	uint8_t _dataConfirmRetries;
-	uint8_t _defaultDataRate;
-
-
-	uint16_t _netConnType;
-	uint16_t _ADRStatus;
-	uint16_t _uplinkAckStatus;
-	uint16_t _powSaveStatus;
-	uint16_t _classSelection;
-
-	uint32_t baudrate;
-	int _datalength;
-	char _incomingByte;
-	bool _timeout;
-	int _rxPin;
-	int _txPin;
-	int respWaitTime=100;
+    SoftwareSerial *altSerial;
+  	int respWaitTime = 100;
+    int charReadDelay = 50;
 
 };
 

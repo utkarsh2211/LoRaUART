@@ -21,70 +21,29 @@
 
 LoRaUART::LoRaUART(int rxPin, int txPin)
 {
-	_rxPin= rxPin;
-	_txPin = txPin;
-	altSerial = new SoftwareSerial(_rxPin,_txPin);
+	altSerial = new SoftwareSerial(rxPin,txPin);
 	altSerial->begin(9600);
 }
 
-LoRaUART::~LoRaUART()
-{
-	/*delete requestAPI;
-  	delete uplinkAPI;
-  	delete downlinkAPI;
-  	delete readCmd;
-  	delete writeCmd;
-  	delete ATcmdRestoreDefault;
-  	delete ATcmdInitLoRa;
-  	delete ATcmdDeactivateLoRa;
-  	delete ATcmdActivateLoRa;
-  	delete ATcmdBaudRate;
-  	delete ATcmdDeviceEUI;
-  	delete ATcmdApplicationEUI;
-  	delete ATcmdApplicationKey;
-  	delete ATcmdNetworkKey;
-  	delete ATcmdDeviceAddr;
-  	delete ATcmdNetworkConnType;
-  	delete ATcmdNetworkID;
-	delete ATcmdADRStatus;
-	delete ATcmdUplinkAckStatus;
-	delete ATcmdDataConfirmRetries;
-	delete ATcmdDefaultDataRate;
-	delete ATcmdPowerSaveMode;
-	delete ATcmdClassSelection;
-	delete ATcmdSaveConfigEEPROM;
-	delete ATcmdRetrieveConfigEEPROM;		
-	delete ATcmdModuleTestCmd;*/
-}
-
-
 int LoRaUART::initLoRa()
 {
-	requestCmd = "";	
-	_CmdType = requestAPI;
-	_ATcmd = "01";
-	_RWmode = readCmd;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,01\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
+
 	while(altSerial->available()>0)
 	{	
 		_incomingByte = (char)altSerial->read();
@@ -93,7 +52,7 @@ int LoRaUART::initLoRa()
 
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -102,58 +61,47 @@ int LoRaUART::initLoRa()
 		q[0]=response.charAt(second+1);
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
-		altSerial->print("q value");
-		altSerial->print(q);
-
-		responseStatus=strtoul(q,NULL,16);
-		altSerial->print("status");
-		altSerial->print(responseStatus);
+	
+		responseStatus=strtol(q,NULL,16);
+	
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
 			case 1: return -1; break;
 			case 2: return -2; break;
+			default: return 1000; break;
 		}	
 	}
 }	
 
 int LoRaUART::activateLoRa()
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_ATcmd = "03";
-	_RWmode = readCmd;
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] ="$CMD,00,03\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
+
+	String response = "";
+	char _incomingByte;
 	
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 
 	if(response.substring(0,4) == "$RES")
@@ -164,50 +112,44 @@ int LoRaUART::activateLoRa()
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 		
-		responseStatus=strtoul(q,NULL,16);
-		
+		responseStatus=strtol(q,NULL,16);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
 			case 1: return -1; break;
 			case 2: return -2; break;
-		}	
+		}		
 	}
 }
 
 int LoRaUART::deactivateLoRa()
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
- 	_ATcmd = "02";
- 	_RWmode = readCmd;
- 	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
- 	for(int i=0; requestCmd.charAt(i)!='\0'; i++)
-		altSerial->write(requestCmd.charAt(i));
+	char charArray[] ="$CMD,00,02\r\n";
+	altSerial->write(charArray);
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
+
+	String response = "";
+	char _incomingByte;
 	
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -218,53 +160,43 @@ int LoRaUART::deactivateLoRa()
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		responseStatus=strtoul(q,NULL,16);
+		responseStatus=strtol(q,NULL,16);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
 			case 1: return -1; break;
 			case 2: return -2; break;
-		}	
+		}		
 	}
 }
 
 int LoRaUART::restoreDefault()
-{
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "00";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+{ 
+	char charArray[] = "$CMD,00,00\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -273,7 +205,7 @@ int LoRaUART::restoreDefault()
 		q[0]=response.charAt(second+1);
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
-		responseStatus=strtoul(q,NULL,16);
+		responseStatus=strtol(q,NULL,16);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
@@ -285,42 +217,33 @@ int LoRaUART::restoreDefault()
 
 long LoRaUART::getBaudRate()
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "04";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,04\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	char b[3];
 	int first,second,third;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
+	uint8_t _getbaud;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -336,8 +259,8 @@ long LoRaUART::getBaudRate()
 		b[1]= response.charAt(third+2);
 		b[2]= '\0';
 
-		responseStatus=strtoul(q,NULL,16);
-		_getbaud = strtoul(b,NULL,16);
+		responseStatus=strtol(q,NULL,16);
+		_getbaud = strtol(b,NULL,16);
 
 		switch(responseStatus)
 		{
@@ -359,47 +282,51 @@ long LoRaUART::getBaudRate()
 
 int LoRaUART::setBaudRate(uint32_t baudrate)
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = writeCmd;
-	_ATcmd = "04";
+
+	char charArray[16] = "$CMD,01,04,";
 
 	switch(baudrate)
 	{
-		case 4800 : _baudrate = "00"; break;
-		case 9600 : _baudrate = "01"; break;
-		case 19200 : _baudrate = "02"; break;
-		case 57600 : _baudrate = "03"; break;
-		case 115200 : _baudrate = "04"; break;
-		default: _baudrate = "01";
-	};
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + ',' + _baudrate + crlf;
-	for(int i=0; requestCmd.charAt(i)!='\0'; i++)
-		altSerial->write(requestCmd.charAt(i));
+		case 4800 :   charArray[11] = '0';
+					  charArray[12] = '0'; break;
+		case 9600 :   charArray[11] = '0';
+					  charArray[12] = '1'; break;
+		case 19200 :  charArray[11] = '0';
+					  charArray[12] = '2'; break;
+		case 57600 :  charArray[11] = '0';
+					  charArray[12] = '3'; break;
+		case 115200 : charArray[11] = '0';
+					  charArray[12] = '4'; break;
+		default: 	  charArray[11] = '0';
+					  charArray[12] = '1'; break;
+	}	
+	charArray[13] = '\r';
+	charArray[14] = '\n';
+	charArray[15] = '\0';
+	altSerial->write(charArray);
+		
+	unsigned long t= millis();
 
-	int t= millis();
-
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -410,56 +337,47 @@ int LoRaUART::setBaudRate(uint32_t baudrate)
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		responseStatus=strtoul(q,NULL,16);
+		responseStatus=strtol(q,NULL,16);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
 			case 1: return -1; break;
 			case 2: return -2; break;
-		}	
+		}		
 	}
 }
 
-int LoRaUART::getDeviceEUI(String* deviceEUI)
+/* The getDeviceEUI method will give the device EUI to the integer array passed as an argument. To get the 
+	values in hexadecimal format, it has to be done explicitly in the program */
+
+int LoRaUART::getDeviceEUI(uint8_t* deviceEUI)
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "05";
-
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,05\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
-	char temp[3];
+	char value[3];
 	int first,second,third;
-	unsigned long responseStatus;
-
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -471,72 +389,94 @@ int LoRaUART::getDeviceEUI(String* deviceEUI)
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		responseStatus=strtoul(q,NULL,16);
+		responseStatus=strtol(q,NULL,16);
 
 		for(int j = third, a=0; response.charAt(j)!='\r'; j++)
 		{
 			if(response.charAt(j)==',')
 			{
-				*(deviceEUI+a) = "";
-				*(deviceEUI+a) +=response.charAt(j+1);
-				*(deviceEUI+a) +=response.charAt(j+2);
+				value[0]=response.charAt(j+1);
+				value[1]=response.charAt(j+2);
+				value[2]='\0';
+				*(deviceEUI+a) = strtol(value,NULL,16);
 				a++;
 			}
 		}
-
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
 			case 1: return -1; break;
 			case 2: return -2; break;
-		}	
+		}		
 	}
-
 }
 
-int LoRaUART::setDeviceEUI(String* deviceEUI, int EUIlength)
+int LoRaUART::setDeviceEUI(uint8_t* deviceEUI)
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = writeCmd;
-	_ATcmd = "05";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + ",";
-	for(int i=1; i<=EUIlength; i++)
+	char charArray[37] = "$CMD,01,05,";
+	charArray[34]='\r';
+	charArray[35]='\n';
+	charArray[36]='\0';
+	
+	String EUI;
+	for(int i=1,j=i+10; i<=8; i++,j+=3)
 	{
-		if(i!=EUIlength)
-			requestCmd = requestCmd + *deviceEUI + ',';
+		EUI= String(*deviceEUI, HEX);
+		if(i!=8)
+		{
+			if(*deviceEUI<=15)
+			{
+				charArray[j]= '0';
+				charArray[j+1] = EUI.charAt(0);
+				charArray[j+2] = ','; 
+			}
+			else
+			{	
+				charArray[j] = EUI.charAt(0);
+				charArray[j+1] = EUI.charAt(1);
+				charArray[j+2] = ',';
+			}	
+		}
 		else
-			requestCmd = requestCmd + *deviceEUI;
+		{
+			if(*deviceEUI<=15)
+			{
+				charArray[j]= '0';
+				charArray[j+1] = EUI.charAt(0);
+			}
+			else
+			{	
+				charArray[j] = EUI.charAt(0);
+				charArray[j+1] = EUI.charAt(1);
+			}	
+		}	
 		deviceEUI++;
 	}
-	requestCmd= requestCmd + crlf;
 
-	for(int i=0; requestCmd.charAt(i)!='\0'; i++)
-		altSerial->write(requestCmd.charAt(i));
+	altSerial->write(charArray);
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -545,55 +485,45 @@ int LoRaUART::setDeviceEUI(String* deviceEUI, int EUIlength)
 		q[0]=response.charAt(second+1);
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
-		responseStatus = strtoul(q,NULL,16);
-		switch(responseStatus)
+		responseStatus = strtol(q,NULL,16);
+	 	switch(responseStatus)
 		{
 			case 0: return 1; break;
 			case 1: return -1; break;
 			case 2: return -2; break;
-		}	
+		}		
 	}
 }
 
-int LoRaUART::getApplicationEUI(String* applicationEUI)
+int LoRaUART::getApplicationEUI(uint8_t* applicationEUI)
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "06";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
 
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,06\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
-	char temp[3];
+	char value[3];
 	int first,second,third;
-	unsigned long responseStatus;
-
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -605,19 +535,19 @@ int LoRaUART::getApplicationEUI(String* applicationEUI)
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		responseStatus=strtoul(q,NULL,16);
+		responseStatus=strtol(q,NULL,16);
 
 		for(int j = third, a=0; response.charAt(j)!='\r'; j++)
 		{
 			if(response.charAt(j)==',')
 			{
-				*(applicationEUI+a) = "";
-				*(applicationEUI+a) +=response.charAt(j+1);
-				*(applicationEUI+a) +=response.charAt(j+2);
+				value[0]=response.charAt(j+1);
+				value[1]=response.charAt(j+2);
+				value[2]='\0';
+				*(applicationEUI+a) = strtol(value,NULL,16);
 				a++;
 			}
 		}
-
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
@@ -627,48 +557,71 @@ int LoRaUART::getApplicationEUI(String* applicationEUI)
 	}
 }
 
-int LoRaUART::setApplicationEUI(String* applicationEUI, int EUIlength)
+int LoRaUART::setApplicationEUI(uint8_t* applicationEUI)
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = writeCmd;
-	_ATcmd = "06";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + ",";
-	for(int i=1; i<=EUIlength; i++)
+	char charArray[37] = "$CMD,01,06,";
+	charArray[34]='\r';
+	charArray[35]='\n';
+	charArray[36]='\0';
+	
+	String EUI;
+	for(int i=1,j=i+10; i<=8; i++,j+=3)
 	{
-		if(i!=EUIlength)
-			requestCmd = requestCmd + *applicationEUI + ',';
+		EUI= String(*applicationEUI, HEX);
+		if(i!=8)
+		{
+			if(*applicationEUI<=15)
+			{
+				charArray[j]= '0';
+				charArray[j+1] = EUI.charAt(0);
+				charArray[j+2] = ','; 
+			}
+			else
+			{	
+				charArray[j] = EUI.charAt(0);
+				charArray[j+1] = EUI.charAt(1);
+				charArray[j+2] = ',';
+			}	
+		}
 		else
-			requestCmd = requestCmd + *applicationEUI;
+		{
+			if(*applicationEUI<=15)
+			{
+				charArray[j]= '0';
+				charArray[j+1] = EUI.charAt(0);
+			}
+			else
+			{	
+				charArray[j] = EUI.charAt(0);
+				charArray[j+1] = EUI.charAt(1);
+			}	
+		}	
 		applicationEUI++;
 	}
-	requestCmd = requestCmd + "\r\n";
-	for(int i=0; requestCmd.charAt(i)!='\0'; i++)
-		altSerial->write(requestCmd.charAt(i));
+	altSerial->write(charArray);
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -679,7 +632,7 @@ int LoRaUART::setApplicationEUI(String* applicationEUI, int EUIlength)
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		responseStatus=strtoul(q,NULL,16);
+		responseStatus=strtol(q,NULL,16);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
@@ -689,44 +642,34 @@ int LoRaUART::setApplicationEUI(String* applicationEUI, int EUIlength)
 	}
 }
 
-int LoRaUART::getApplicationKey(String* _applicationKey)
+int LoRaUART::getApplicationKey(uint8_t* _applicationKey)
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "07";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,07\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
-	char temp[3];
+	char value[3];
 	int first,second,third;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 
 	if(response.substring(0,4) == "$RES")
@@ -739,19 +682,19 @@ int LoRaUART::getApplicationKey(String* _applicationKey)
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		responseStatus=strtoul(q,NULL,16);
+		responseStatus=strtol(q,NULL,16);
 
 		for(int j = third, a=0; response.charAt(j)!='\r'; j++)
 		{
 			if(response.charAt(j)==',')
 			{
-				*(_applicationKey+a) = "";
-				*(_applicationKey+a) +=response.charAt(j+1);
-				*(_applicationKey+a) +=response.charAt(j+2);
+				value[0]=response.charAt(j+1);
+				value[1]=response.charAt(j+2);
+				value[2]='\0';
+				*(_applicationKey+a) = strtol(value,NULL,16);
 				a++;
 			}
 		}
-
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
@@ -761,49 +704,71 @@ int LoRaUART::getApplicationKey(String* _applicationKey)
 	}
 }
 
-int LoRaUART::setApplicationKey(String* _applicationKey, int applicationKeyLen)
+int LoRaUART::setApplicationKey(uint8_t* _applicationKey)
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = writeCmd;
-	_ATcmd = "07";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + ",";
-	for(int i=1; i<=applicationKeyLen; i++)
+	char charArray[61] = "$CMD,01,07,";
+	charArray[58]='\r';
+	charArray[59]='\n';
+	charArray[60]='\0';
+	
+	String Key;
+	for(int i=1,j=i+10; i<=16; i++,j+=3)
 	{
-		if(i!=applicationKeyLen)
-			requestCmd = requestCmd + *_applicationKey + ',';
+		Key= String(*_applicationKey, HEX);
+		if(i!=16)
+		{
+			if(*_applicationKey<=15)
+			{
+				charArray[j]= '0';
+				charArray[j+1] = Key.charAt(0);
+				charArray[j+2] = ','; 
+			}
+			else
+			{	
+				charArray[j] = Key.charAt(0);
+				charArray[j+1] = Key.charAt(1);
+				charArray[j+2] = ',';
+			}	
+		}
 		else
-			requestCmd = requestCmd + *_applicationKey;
+		{
+			if(*_applicationKey<=15)
+			{
+				charArray[j]= '0';
+				charArray[j+1] = Key.charAt(0);
+			}
+			else
+			{	
+				charArray[j] = Key.charAt(0);
+				charArray[j+1] = Key.charAt(1);
+			}	
+		}	
 		_applicationKey++;
 	}
-	requestCmd= requestCmd + crlf;
+	altSerial->write(charArray);
 
-	for(int i=0; requestCmd.charAt(i)!='\0'; i++)
-		altSerial->write(requestCmd.charAt(i));
+	unsigned long t= millis();
 
-	int t= millis();
-
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -812,55 +777,44 @@ int LoRaUART::setApplicationKey(String* _applicationKey, int applicationKeyLen)
 		q[0]=response.charAt(second+1);
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
-		responseStatus = strtoul(q,NULL,16);
+		responseStatus = strtol(q,NULL,16);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
 			case 1: return -1; break;
 			case 2: return -2; break;
-		}	
+		}		
 	}
 }	
 
-int LoRaUART::getNetworkKey(String* _networkKey)
+int LoRaUART::getNetworkKey(uint8_t* _networkKey)
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "08";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,08\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
-	char temp[3];
+	char value[3];
 	int first,second,third;
-	unsigned long responseStatus;
-
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -872,19 +826,19 @@ int LoRaUART::getNetworkKey(String* _networkKey)
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		responseStatus=strtoul(q,NULL,16);
+		responseStatus=strtol(q,NULL,16);
 
 		for(int j = third, a=0; response.charAt(j)!='\r'; j++)
 		{
 			if(response.charAt(j)==',')
 			{
-				*(_networkKey+a) = "";
-				*(_networkKey+a) +=response.charAt(j+1);
-				*(_networkKey+a) +=response.charAt(j+2);
+				value[0]=response.charAt(j+1);
+				value[1]=response.charAt(j+2);
+				value[2]='\0';
+				*(_networkKey+a) = strtol(value,NULL,16);
 				a++;
 			}
 		}
-
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
@@ -894,49 +848,71 @@ int LoRaUART::getNetworkKey(String* _networkKey)
 	}
 }
 
-int LoRaUART::setNetworkKey(String* _networkKey, int networkKeyLength)
+int LoRaUART::setNetworkKey(uint8_t* _networkKey)
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = writeCmd;
-	_ATcmd = "08";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + ",";
-	for(int i=1; i<=networkKeyLength; i++)
+	char charArray[61] = "$CMD,01,08,";
+	charArray[58]='\r';
+	charArray[59]='\n';
+	charArray[60]='\0';
+	
+	String Key;
+	for(int i=1,j=i+10; i<=16; i++,j+=3)
 	{
-		if(i!=networkKeyLength)
-			requestCmd = requestCmd + *_networkKey + ',';
+		Key= String(*_networkKey, HEX);
+		if(i!=16)
+		{
+			if(*_networkKey<=15)
+			{
+				charArray[j]= '0';
+				charArray[j+1] = Key.charAt(0);
+				charArray[j+2] = ','; 
+			}
+			else
+			{	
+				charArray[j] = Key.charAt(0);
+				charArray[j+1] = Key.charAt(1);
+				charArray[j+2] = ',';
+			}	
+		}
 		else
-			requestCmd = requestCmd + *_networkKey;
+		{
+			if(*_networkKey<=15)
+			{
+				charArray[j]= '0';
+				charArray[j+1] = Key.charAt(0);
+			}
+			else
+			{	
+				charArray[j] = Key.charAt(0);
+				charArray[j+1] = Key.charAt(1);
+			}	
+		}	
 		_networkKey++;
 	}
-	requestCmd= requestCmd + crlf;
+	altSerial->write(charArray);
 
-	for(int i=0; requestCmd.charAt(i)!='\0'; i++)
-		altSerial->write(requestCmd.charAt(i));
+	unsigned long t= millis();
 
-	int t= millis();
-
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -945,7 +921,7 @@ int LoRaUART::setNetworkKey(String* _networkKey, int networkKeyLength)
 		q[0]=response.charAt(second+1);
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
-		responseStatus = strtoul(q,NULL,16);
+		responseStatus = strtol(q,NULL,16);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
@@ -955,45 +931,34 @@ int LoRaUART::setNetworkKey(String* _networkKey, int networkKeyLength)
 	}
 }	
 
-int LoRaUART::getDeviceAddress(String* _deviceAddress)
+int LoRaUART::getDeviceAddress(uint8_t* _deviceAddress)
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "09";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,09\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
-	char temp[3];
+	char value[3];
 	int first,second,third;
-	unsigned long responseStatus;
-
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -1005,20 +970,19 @@ int LoRaUART::getDeviceAddress(String* _deviceAddress)
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		responseStatus=strtoul(q,NULL,16);
+		responseStatus=strtol(q,NULL,16);
 
 		for(int j = third, a=0; response.charAt(j)!='\r'; j++)
 		{
 			if(response.charAt(j)==',')
 			{
-				*(_deviceAddress+a) = "";
-				*(_deviceAddress+a) +=response.charAt(j+1);
-				*(_deviceAddress+a) +=response.charAt(j+2);
+				value[0]=response.charAt(j+1);
+				value[1]=response.charAt(j+2);
+				value[2]='\0';
+				*(_deviceAddress+a) = strtol(value,NULL,16);
 				a++;
-			
 			}
 		}
-
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
@@ -1028,49 +992,71 @@ int LoRaUART::getDeviceAddress(String* _deviceAddress)
 	}
 }	
 
-int LoRaUART::setDeviceAddress(String* _deviceAddress, int deviceAddressLength)
+int LoRaUART::setDeviceAddress(uint8_t* _deviceAddress)
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = writeCmd;
-	_ATcmd = "09";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + ",";
-	for(int i=1; i<=deviceAddressLength; i++)
+	char charArray[25] = "$CMD,01,09,";
+	charArray[22]='\r';
+	charArray[23]='\n';
+	charArray[24]='\0';
+	
+	String Address;
+	for(int i=1,j=i+10; i<=4; i++,j+=3)
 	{
-		if(i!=deviceAddressLength)
-			requestCmd = requestCmd + *_deviceAddress + ',';
+		Address= String(*_deviceAddress, HEX);
+		if(i!=4)
+		{
+			if(*_deviceAddress<=15)
+			{
+				charArray[j]= '0';
+				charArray[j+1] = Address.charAt(0);
+				charArray[j+2] = ','; 
+			}
+			else
+			{	
+				charArray[j] = Address.charAt(0);
+				charArray[j+1] = Address.charAt(1);
+				charArray[j+2] = ',';
+			}	
+		}
 		else
-			requestCmd = requestCmd + *_deviceAddress;
+		{
+			if(*_deviceAddress<=15)
+			{
+				charArray[j]= '0';
+				charArray[j+1] = Address.charAt(0);
+			}
+			else
+			{	
+				charArray[j] = Address.charAt(0);
+				charArray[j+1] = Address.charAt(1);
+			}	
+		}	
 		_deviceAddress++;
 	}
-	requestCmd= requestCmd + crlf;
+	altSerial->write(charArray);
 
-	for(int i=0; requestCmd.charAt(i)!='\0'; i++)
-		altSerial->write(requestCmd.charAt(i));
+	unsigned long t= millis();
 
-	int t= millis();
-
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -1079,7 +1065,7 @@ int LoRaUART::setDeviceAddress(String* _deviceAddress, int deviceAddressLength)
 		q[0]=response.charAt(second+1);
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
-		responseStatus = strtoul(q,NULL,16);
+		responseStatus = strtol(q,NULL,16);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
@@ -1091,42 +1077,33 @@ int LoRaUART::setDeviceAddress(String* _deviceAddress, int deviceAddressLength)
 
 int LoRaUART::getNetworkConnType()
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "0A";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,0A\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	char b[3];
 	int first,second,third;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
+	uint8_t _netConnType;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -1142,8 +1119,8 @@ int LoRaUART::getNetworkConnType()
 		b[1]= response.charAt(third+2);
 		b[2]= '\0';
 
-		responseStatus=strtoul(q,NULL,16);
-		_netConnType = strtoul(b,NULL,16);
+		responseStatus=strtol(q,NULL,16);
+		_netConnType = strtol(b,NULL,16);
 
 		switch(responseStatus)
 		{
@@ -1159,44 +1136,34 @@ int LoRaUART::getNetworkConnType()
 	}
 }
 
-int LoRaUART::getNetworkID(String* _networkID)
+int LoRaUART::getNetworkID(uint8_t* _networkID)
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "0B";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,0B\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}	
 
 	char q[3];
-	char temp[3];
+	char value[3];
 	int first,second,third;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 
 	if(response.substring(0,4) == "$RES")
@@ -1209,19 +1176,19 @@ int LoRaUART::getNetworkID(String* _networkID)
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		responseStatus=strtoul(q,NULL,16);
+		responseStatus=strtol(q,NULL,16);
 
 		for(int j = third, a=0; response.charAt(j)!='\r'; j++)
 		{
 			if(response.charAt(j)==',')
 			{
-				*(_networkID+a) = "";
-				*(_networkID+a) +=response.charAt(j+1);
-				*(_networkID+a) +=response.charAt(j+2);
+				value[0]=response.charAt(j+1);
+				value[1]=response.charAt(j+2);
+				value[2]='\0';
+				*(_networkID+a) = strtol(value,NULL,16);
 				a++;
 			}
 		}
-
 		switch(responseStatus)
 		{
 			case 0: return 1; break;
@@ -1233,42 +1200,33 @@ int LoRaUART::getNetworkID(String* _networkID)
 
 int LoRaUART::getADRStatus()
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "0C";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,0C\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	char b[3];
 	int first,second,third;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
+	uint8_t _ADRStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -1284,8 +1242,8 @@ int LoRaUART::getADRStatus()
 		b[1]= response.charAt(third+2);
 		b[2]= '\0';
 
-		responseStatus=strtoul(q,NULL,16);
-		_ADRStatus = strtoul(b,NULL,16);
+		responseStatus=strtol(q,NULL,16);
+		_ADRStatus = strtol(b,NULL,16);
 
 		switch(responseStatus)
 		{
@@ -1303,42 +1261,33 @@ int LoRaUART::getADRStatus()
 
 int LoRaUART::getUplinkAckStatus()
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "0D";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,0D\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	char b[3];
 	int first,second,third;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
+	uint8_t _uplinkAckStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -1354,8 +1303,8 @@ int LoRaUART::getUplinkAckStatus()
 		b[1]= response.charAt(third+2);
 		b[2]= '\0';
 
-		responseStatus=strtoul(q,NULL,16);
-		_uplinkAckStatus = strtoul(b,NULL,16);
+		responseStatus=strtol(q,NULL,16);
+		_uplinkAckStatus = strtol(b,NULL,16);
 
 		switch(responseStatus)
 		{
@@ -1373,42 +1322,33 @@ int LoRaUART::getUplinkAckStatus()
 
 int LoRaUART::getDataConfirmationRetries()
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "0E";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,0E\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	char b[3];
 	int first,second,third;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
+	uint8_t _dataConfirmRetries;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -1424,8 +1364,8 @@ int LoRaUART::getDataConfirmationRetries()
 		b[1]= response.charAt(third+2);
 		b[2]= '\0';
 
-		responseStatus=strtoul(q,NULL,16);
-		_dataConfirmRetries = strtoul(b,NULL,16);
+		responseStatus=strtol(q,NULL,16);
+		_dataConfirmRetries = strtol(b,NULL,16);
 
 		switch(responseStatus)
 		{
@@ -1439,42 +1379,33 @@ int LoRaUART::getDataConfirmationRetries()
 
 int LoRaUART::getDataRate()
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "0F";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,0F\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}	
 
 	char q[3];
 	char b[3];
 	int first,second,third;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
+	uint8_t _defaultDataRate;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -1490,8 +1421,8 @@ int LoRaUART::getDataRate()
 		b[1]= response.charAt(third+2);
 		b[2]= '\0';
 
-		responseStatus=strtoul(q,NULL,16);
-		_defaultDataRate = strtoul(b,NULL,16);
+		responseStatus=strtol(q,NULL,16);
+		_defaultDataRate = strtol(b,NULL,16);
 
 		switch(responseStatus)
 		{
@@ -1505,42 +1436,33 @@ int LoRaUART::getDataRate()
 
 int LoRaUART::getPowerSavingStatus()
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "10";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,10\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	char b[3];
 	int first,second,third;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
+	uint8_t _powSaveStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -1556,8 +1478,8 @@ int LoRaUART::getPowerSavingStatus()
 		b[1]= response.charAt(third+2);
 		b[2]= '\0';
 
-		responseStatus=strtoul(q,NULL,16);
-		_powSaveStatus = strtoul(b,NULL,16);
+		responseStatus=strtol(q,NULL,16);
+		_powSaveStatus = strtol(b,NULL,16);
 
 		switch(responseStatus)
 		{
@@ -1575,42 +1497,33 @@ int LoRaUART::getPowerSavingStatus()
 
 int LoRaUART::getClassSelection()
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "11";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,11\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}	
 
 	char q[3];
 	char b[3];
 	int first,second,third;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
+	uint8_t _classSelection;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -1626,8 +1539,8 @@ int LoRaUART::getClassSelection()
 		b[1]= response.charAt(third+2);
 		b[2]= '\0';
 
-		responseStatus=strtoul(q,NULL,16);
-		_classSelection = strtoul(b,NULL,16);
+		responseStatus=strtol(q,NULL,16);
+		_classSelection = strtol(b,NULL,16);
 
 		switch(responseStatus)
 		{
@@ -1645,35 +1558,31 @@ int LoRaUART::getClassSelection()
 
 int LoRaUART::saveConfigToEEPROM()
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "12";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+	char charArray[] = "$CMD,00,12\r\n";
+	altSerial->write(charArray);
 
-	for(int i=0; requestCmd.charAt(i)!='\0'; i++)
-		altSerial->write(requestCmd.charAt(i));
+	unsigned long t= millis();
 
-	int t= millis();
-
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
-	if(millis()-t >1000)
-		_timeout=true;
-
-	else
-	{			
-		while(altSerial->available())
-		{
-			_incomingByte = (char)altSerial->read();
-			response += _incomingByte;
-		}	
-	}	
+	{
+		if(millis()-t >1000)
+			return -3;
+	}
+		
+	String response = "";
+	char _incomingByte;
+	while(altSerial->available()>0)
+	{
+		_incomingByte = altSerial->read();
+		response += _incomingByte;
+		delay(charReadDelay);
+	}		
 
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -1683,7 +1592,7 @@ int LoRaUART::saveConfigToEEPROM()
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		responseStatus=strtoul(q,NULL,16);
+		responseStatus=strtol(q,NULL,16);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;				//success
@@ -1695,35 +1604,31 @@ int LoRaUART::saveConfigToEEPROM()
 
 int LoRaUART::retrieveConfigFromEEPROM()
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "13";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
+	char charArray[] = "$CMD,00,13\r\n";
+	altSerial->write(charArray);
 
-	for(int i=0; requestCmd.charAt(i)!='\0'; i++)
-		altSerial->write(requestCmd.charAt(i));
+	unsigned long t= millis();
 
-	int t= millis();
-
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
-	if(millis()-t >1000)
-		_timeout=true;
+	{
+		if(millis()-t >1000)
+			return -3;
+	}		
 	
-	else
-	{			
-		while(altSerial->available())
-		{
-			_incomingByte = (char)altSerial->read();
-			response += _incomingByte;
-		}	
-	}	
+	String response = "";
+	char _incomingByte;
+	while(altSerial->available()>0)
+	{
+		_incomingByte = altSerial->read();
+		response += _incomingByte;
+		delay(charReadDelay);
+	}		
 
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -1733,7 +1638,7 @@ int LoRaUART::retrieveConfigFromEEPROM()
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		responseStatus=strtoul(q,NULL,16);
+		responseStatus=strtol(q,NULL,16);
 
 		switch(responseStatus)
 		{
@@ -1746,41 +1651,31 @@ int LoRaUART::retrieveConfigFromEEPROM()
 
 int LoRaUART::moduleTest()
 {
-	requestCmd = "";
-	_CmdType = requestAPI;
-	_RWmode = readCmd;
-	_ATcmd = "FF";
-	requestCmd= requestCmd + _CmdType + ',' + _RWmode + ',' + _ATcmd + crlf;
-
-	//Convert string requestCmd to a character array for passing it in altSerial->write() 
-	char * charArray = (char*) malloc(sizeof(char)*(requestCmd.length() + 1));
-	requestCmd.toCharArray(charArray,requestCmd.length()+1);
+	char charArray[] = "$CMD,00,FF\r\n";
 	altSerial->write(charArray);
-	delete charArray;
 
-	int t= millis();
+	unsigned long t= millis();
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime){}   					// Time required for response to load into serial 
 
 	while(!altSerial->available())
 	{
 		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
+			return -3;
 	}		
 	
+	String response = "";
+	char _incomingByte;
 	while(altSerial->available()>0)
 	{
 		_incomingByte = altSerial->read();
 		response += _incomingByte;
+		delay(charReadDelay);
 	}
 
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
 	if(response.substring(0,4) == "$RES")
 	{
@@ -1790,7 +1685,7 @@ int LoRaUART::moduleTest()
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		responseStatus=strtoul(q,NULL,16);
+		responseStatus=strtol(q,NULL,16);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;				//success
@@ -1801,61 +1696,115 @@ int LoRaUART::moduleTest()
 }
 
 /* This function sends a uplink to the server with the data as provided in the packet.
- 	The data types of the arguments to it are all of String class i.e. the portnum, datalength, and 
- 	data should be a string object with values in hexadecimal equivalent.
-
- 	For example- if length of data is 10, then variable datalength should be given as String datalength = "0A"*/
-
-int LoRaUART::sendUplink(String portnum, String datalength, String* data)
+ 	*/
+int LoRaUART::sendUplink(int portnum, int datalength, uint8_t* data)
 {
-	requestCmd = "";
-	_CmdType = uplinkAPI;
-	_portnum = portnum;
+	int arraylength = (2*datalength)+(datalength-1)+12;
+	char charArray[120] = "$UP,";
+	charArray[arraylength-2]='\r';
+	charArray[arraylength-1]='\n';
+	charArray[arraylength]='\0';
 
-	char len[3];
-	len[0] = datalength.charAt(0);
-	len[1] = datalength.charAt(1);
-	len[2] = '\0';
-	_datalength = strtoul(len,NULL,10);
-
-	requestCmd= requestCmd + _CmdType + ',' + _portnum + ',' + datalength + ",";
-	for(int i=1; i<=_datalength; i++)
+	String temp = String(portnum, HEX);
+	if(portnum<=15)
 	{
-		if(i!=_datalength)
-			requestCmd = requestCmd + *data + ',';
+		charArray[4]= '0';
+		charArray[5] = temp.charAt(0);
+		charArray[6] = ','; 
+	}
+	else
+	{	
+		charArray[4] = temp.charAt(0);
+		charArray[5] = temp.charAt(1);
+		charArray[6] = ',';
+	}
+
+	temp = String(datalength, HEX);
+	if(datalength<=15)
+	{
+		charArray[7]= '0';
+		charArray[8] = temp.charAt(0);
+		charArray[9] = ','; 
+	}
+	else
+	{	
+		charArray[7] = temp.charAt(0);
+		charArray[8] = temp.charAt(1);
+		charArray[9] = ',';
+	}
+	
+	for(int i=1,j=i+9; i<=datalength; i++,j+=3)
+	{
+		temp = String(*data, HEX);
+		if(i!=datalength)
+		{
+			if(*data<=15)
+			{
+				charArray[j]= '0';
+				charArray[j+1] = temp.charAt(0);
+				charArray[j+2] = ','; 
+			}
+			else
+			{	
+				charArray[j] = temp.charAt(0);
+				charArray[j+1] = temp.charAt(1);
+				charArray[j+2] = ',';
+			}	
+		}
 		else
-			requestCmd = requestCmd + *data;
+		{
+			if(*data<=15)
+			{
+				charArray[j]= '0';
+				charArray[j+1] = temp.charAt(0);
+			}
+			else
+			{	
+				charArray[j] = temp.charAt(0);
+				charArray[j+1] = temp.charAt(1);
+			}	
+		}	
 		data++;
 	}
-	requestCmd = requestCmd + crlf;
-	for(int i=0; requestCmd.charAt(i)!='\0'; i++)
-		altSerial->write(requestCmd.charAt(i));
+	altSerial->flush();
+	altSerial->write(charArray);
 
-	int t= millis();
+	unsigned long t= millis();
+	bool uplinkResp = false;
 
-	while(millis()-t<respWaitTime)   					// Time required for response to load into serial 
+	while(millis()-t<respWaitTime);  					// Time required for response to load into serial 
 
-	while(!altSerial->available())
-	{
-		if(millis()-t >1000)
-	{
-		_timeout=true;
-		altSerial->println("Error");
-		return 1000;
-	}
-	}		
+	t=millis();	
+
+	// while(!altSerial->available())
+	// {
+	// 	delay(10);
+	// 	if(millis()-t >5000)
+	// 		return -3;
+	// }		
 	
-	while(altSerial->available()>0)
-	{
-		_incomingByte = altSerial->read();
-		response += _incomingByte;
-	}
+	String response = "";
+	char _incomingByte;
 
+	while(millis()-t<5000)
+	{
+		while(altSerial->available()>0)
+		{
+			uplinkResp=true;
+			_incomingByte = altSerial->read();
+			response += _incomingByte;
+			delay(charReadDelay);
+		}
+		if(uplinkResp)
+			break;
+	}
+	if(uplinkResp==false)	
+		return -3;
 	char q[3];
 	int first,second;
-	unsigned long responseStatus;
+	uint8_t responseStatus;
 
-	if(response.substring(0,3) == "$UP")
+	if(response.substring(0,6) == "$UP,00")
 	{
 		first=response.indexOf(',');
 		second = response.indexOf(',',first+1);
@@ -1864,14 +1813,16 @@ int LoRaUART::sendUplink(String portnum, String datalength, String* data)
 		q[1]=response.charAt(second+2);
 		q[2]='\0';
 
-		responseStatus=strtoul(q,NULL,16);
-		altSerial->print(responseStatus);
+		responseStatus=strtol(q,NULL,16);
 		switch(responseStatus)
 		{
 			case 0: return 1; break;				//successfully uplink sent
 			case 1: return -1; break;				//failure
 		}	
 	}
+	else
+		{Serial.println(1000);
+		return 1000;}
 }
 
 /*	For calling checkDownlink function, the arguments  must be passed as
@@ -1879,11 +1830,12 @@ int LoRaUART::sendUplink(String portnum, String datalength, String* data)
 	where data is an array of max size 50 
 */	
 
-int LoRaUART::checkDownlink(String* port, String* dataLen, String* downlinkData)
+int LoRaUART::checkDownlink(uint8_t* port, uint8_t* dataLen, uint8_t* downData)
 {
-	response="";
-	*port = "";
-	*dataLen = "";	
+	String response="";
+	char _incomingByte;
+
+	while(!altSerial->available());
 
 	if(altSerial->available()>0)
 	{
@@ -1895,6 +1847,7 @@ int LoRaUART::checkDownlink(String* port, String* dataLen, String* downlinkData)
 	}
 
 	int first,second,third;
+	char value[3];
 
 	if(response.substring(0,5) == "$DOWN")
 	{
@@ -1902,19 +1855,24 @@ int LoRaUART::checkDownlink(String* port, String* dataLen, String* downlinkData)
 		second = response.indexOf(',',first+1);
 		third = response.indexOf(',',second+1);
 
-		*port += response.charAt(first+1);
-		*port += response.charAt(first+2);
+		value[0]=response.charAt(first+1);
+		value[1]=response.charAt(first+2);
+		value[2]='\0';
+		*port = strtol(value,NULL,16);
 
-		*dataLen += response.charAt(second+1);
-		*dataLen += response.charAt(second+2);
+		value[0]=response.charAt(second+1);
+		value[1]=response.charAt(second+2);
+		value[2]='\0';
+		*dataLen = strtol(value,NULL,16);
 
 		for(int j = third, a=0; response.charAt(j)!='\r'; j++)
 		{
 			if(response.charAt(j)==',')
-			{
-				*(downlinkData+a) = "";
-				*(downlinkData+a) +=response.charAt(j+1);
-				*(downlinkData+a) +=response.charAt(j+2);
+			{	
+				value[0]=response.charAt(j+1);
+				value[1]=response.charAt(j+2);
+				value[2]='\0';
+				*(downData+a) = strtol(value,NULL,16);
 				a++;
 			}
 		}
