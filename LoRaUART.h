@@ -92,29 +92,99 @@ class LoRaUART
        e.g. uint8_t applicationKey[] = {0xAA,0x36,0x40,0xAB,0x0E,0x47,0xDF,0x96,0x06,0x55,0x79,0xA4,0x96,0x16,0x4C,0x56};
             LoRaModule.setApplicationKey(applicationKey); */
   	int setApplicationKey(uint8_t*);
-    
+
+    /* getNetworkKey() method will assign the Network Key to the array passed as an argument to the method.
+       The array should be of 8 bit integer i.e. uint8_t
+       e.g. uint8_t networkKey[16];
+            LoRaModule.getNetworkKey(networkKey); */
   	int getNetworkKey(uint8_t*);
+
+    /* setNetworkKey() method sets the Network Key which is passed as an array to the argument of the method
+       The array should be of datatype uint8_t with the individul elements of the address in
+       hexadecimal format.
+       e.g. uint8_t networkKey[] = {0x95,0x75,0xA4,0xDD,0x02,0xA6,0x87,0x39,0xCA,0x6F,0x0A,0xB7,0x44,0x99,0x42,0x75};
+            LoRaModule.setNetworkKey(networkKey); */
   	int setNetworkKey(uint8_t*);
+
+    /* getDeviceAddress() method will assign the Device Address to the array passed as an argument to the method.
+       The array should be of 8 bit integer i.e. uint8_t
+       e.g. uint8_t deviceAddress[4];
+            LoRaModule.getDeviceAddress(deviceAddress); */
   	int getDeviceAddress(uint8_t*);
+
+    /* setDeviceAddress() method sets the Device Address which is passed as an array to the argument of the method
+       The array should be of datatype uint8_t with the individul elements of the address in
+       hexadecimal format.
+       e.g. uint8_t deviceAddress[] = {0x70,0x00,0xD0,0x50};
+            LoRaModule.setDeviceAddress(deviceAddress); */
   	int setDeviceAddress(uint8_t*);
+
+    /* getNetworkConnType() method gives the type  of connection i.e. Over the air activation or Activation by Personalisation
+       e.g. int networkConn = LoRaModule.getNetworkConnType(); */
   	int getNetworkConnType();
+
+    /* getNetworkID() method will assign the Network ID to the array passed as an argument to the method.
+       The array should be of 8 bit integer i.e. uint8_t
+       e.g. uint8_t networkID[4];
+            LoRaModule.getNetworkID(networkID); */
   	int getNetworkID(uint8_t*);
+
+    /* getADRStatus() method returns whether the ADR is ON or OFF where 0 means ON and 1  means OFF
+       e.g int ADRStatus = LoRaModule.getADRStatus(); */
   	int getADRStatus();
+
+    /* getUplinkAckStatus() method checks whether receiving of an acknowledgement is active after sending an uplink to the server 
+       0 means ON while 1 means OFF
+       e.g. int uplinkAck = LoRaModule.getUplinkAckStatus(); */
   	int getUplinkAckStatus();
+
+    /* getDataConfirmationRetries() method gives the number of retries which the module makes for the confirmation of data
+       e.g. int dataReties = LoRaModule.getDataConfirmationRetries(); */
   	int getDataConfirmationRetries();
+
+    /* getDataRate() method returns the data rate
+       e.g. int dataRate = LoRaModule.getDataRate(); */
   	int getDataRate();
+
+    /* getPowerSavingStatus() method returns whether the power saving mode on the device is active or not
+       0 means ON while 1 means OFF 
+       e.g int powerSaveMode = LoRaModule.getPowerSavingStatus(); */
   	int getPowerSavingStatus();
+
+    /* getClassSelection() returns whether the device is programmed to be of A type or C type
+       0 means C type while 1 means A type 
+       e.g. int classtype = LoRaModule.getClassSelection(); */ 
   	int getClassSelection();
+
+    /* saveConfigToEEPROM() method saves the module configurations to EEPROM */
   	int saveConfigToEEPROM();
+
+    /* retrieveConfigFromEEPROM method reads configurations from the EEPROM and loads it to the module */ 
   	int retrieveConfigFromEEPROM();
+
+    /* moduleTest() tests the module for a response */
   	int moduleTest();
 
+    /* sendUplink() sends an uplink to the server with the port number, datalength and data (an array) as argument
+       to the method. Port number and datalength are of integer datatype while data is an array of uint8_t datatype
+       e.g. uint8_t uplinkData[] = {0x00,0x00,0x00,0x00,0x03,0x16};
+            int uplinkPort = 5;
+            int uplinkDataLength = 6; 
+            LoraModule.sendUplink(uplinkPort,uplinkDataLength, uplinkData); */
   	int sendUplink(int, int, uint8_t*);
-  	int checkDownlink(uint8_t*, uint8_t*, uint8_t*);
+
+    /* checkDownlink() method checks for a downlink received in the serial buffer. If yes, it assigns the port number,
+       datalength and data received in the frame to the arguments passed, where downlinkData is an array.
+       All three arguments are of datatype uint8_t, where do 
+  	   e.g. uint8_t port;
+            uint8_t datalength;
+            uint8_t downlinkData[50];
+            LoraModule.checkDownlink(&port,&datalength,downlinkData); */
+    int checkDownlink(uint8_t*, uint8_t*, uint8_t*);
 
   private:
     SoftwareSerial *altSerial;
-  	int respWaitTime = 100;
+    int respWaitTime = 100;
     int charReadDelay = 50;
 
 };
