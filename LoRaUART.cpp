@@ -16,6 +16,7 @@
 /* General Note: For every request, return of 1 by the function corresponds to successful request
 									return of -1 corresponds to invalid parameters sent
 									return of -2 corresponds to AT command error
+									return of -3 corresponds to request timeout
 
 */
 
@@ -1848,8 +1849,6 @@ int LoRaUART::checkDownlink(uint8_t* port, uint8_t* dataLen, uint8_t* downData)
 	else
 		return -3;
 
-	Serial.println("resp");
-	Serial.println(response);
 	int downSubstring = response.indexOf("$DOWN");
 	char charArray[100];
 	int index = 0;
