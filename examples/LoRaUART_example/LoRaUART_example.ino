@@ -25,6 +25,16 @@ uint8_t downlinkData[50];
 bool t=true;
 bool x= true;
 
+/* For every request, return of 1 by the function corresponds to successful request
+                      return of -1 corresponds to invalid parameters sent
+                      return of -2 corresponds to AT command error
+                      return of -3 corresponds to request timeout
+                      
+  The device address, network Key, application key, etc should be given in an array of 
+  data type uint8_t with data in hexadecimal value.
+  For eg uint8_t deviceAddress = {0x70,0x00,0x0C,0x43};                      
+*/
+
 void setup()
 {
   //set baud rate 9600 for communicating on USB serial
@@ -104,16 +114,6 @@ void setup()
   }
   delay(10000); 
 }
-
-/* For every request, return of 1 by the function corresponds to successful request
-                      return of -1 corresponds to invalid parameters sent
-                      return of -2 corresponds to AT command error
-                      return of -3 corresponds to request timeout
-                      
-  The device address, network Key, application key, etc should be given in an array of 
-  data type uint8_t with data in hexadecimal value.
-  For eg uint8_t deviceAddress = {0x70,0x00,0x0C,0x43};                      
-*/
 
 void loop()
 {
