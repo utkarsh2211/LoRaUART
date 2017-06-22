@@ -30,15 +30,18 @@ void setup()
   //set baud rate 9600 for communicating on USB serial
   Serial.begin(9600);
 
-//  Serial.println("Testing LoRa module by sending a test command");
-//  switch(LoraModule.moduleTest())
-//  {
-//   case  1 : Serial.println("LoRa Module successfully tested");break;
-//   case -1 : Serial.println("Invalid Parameters provided");break;
-//   case -2 : Serial.println("AT command error");break;
-//   case -3 : Serial.println("Request timeout");break;
-//  }
-//  delay(1000);
+// The LoRa module can be tested by uncommenting the moduleTest() method provided below  
+/*
+  Serial.println("Testing LoRa module by sending a test command");
+  switch(LoraModule.moduleTest())
+  {
+   case  1 : Serial.println("LoRa Module successfully tested");break;
+   case -1 : Serial.println("Invalid Parameters provided");break;
+   case -2 : Serial.println("AT command error");break;
+   case -3 : Serial.println("Request timeout");break;
+  }
+  delay(1000);
+*/
 
   Serial.println("Loading Default values to the various attributes of the module");
   switch(LoraModule.restoreDefault())
@@ -118,6 +121,7 @@ void loop()
    The data types of the arguments to it are all of uint8_t type i.e. the portnum, datalength, and 
    data should be integers with values in hexadecimal equivalent.
 
+   Delay of at least 30 seconds should be given after calling sendUplink method 
 */
   Serial.println("Sending an Uplink request");
   switch(LoraModule.sendUplink(uplinkPort,uplinkDataLength, uplinkData))
@@ -136,24 +140,23 @@ void loop()
 */
 
 // It can be uncommented from next line
-
+/*
    
   Serial.println("Checking Downlink");  
-  delay(100);
 
   if(LoraModule.checkDownlink(&port,&datalength,downlinkData)==1)
-    {
-      Serial.println("Port number");
+  {
+    Serial.println("Port number");
     Serial.println(port);
     Serial.println("Length of the data");
     Serial.println(datalength);
     Serial.println("Data received");
 
     for(int i=0; i<datalength; i++)
-    Serial.println(*(downlinkData+i));
-   
-    }
-    else
-      Serial.println("No downlink");      
+    Serial.println(*(downlinkData+i)); 
+  }
+  else
+    Serial.println("No downlink");  
+*/        
 }
 
